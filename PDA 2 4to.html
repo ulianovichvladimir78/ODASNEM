@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ODA Lenguaje | Textos discontinuos (4 actividades)</title>
+  <style>
+    :root{
+      /* Lenguaje (rojo) */
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --card:#ffffff;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --soft:#fee2e2;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{margin:0; font-size: clamp(20px, 2.4vw, 30px); letter-spacing:.2px;}
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.88); max-width:900px; line-height:1.35}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .pill b{font-weight:800}
+    .pill span{color:rgba(255,255,255,.92)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1a0b0b;
+      color:#fff;
+      display:inline-block;
+    }
+    .progressWrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+    .bar{
+      width: 240px; height: 12px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+
+    main{max-width:1100px; margin:0 auto; padding:12px 16px 0}
+    .card{
+      background:rgba(255,255,255,.93);
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(254,202,202,.75);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px}
+    .card .bd{padding:16px}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none;
+      background:var(--accent); color:#fff;
+      padding:10px 14px; border-radius:12px;
+      cursor:pointer; font-weight:800;
+      box-shadow: 0 10px 18px rgba(185,28,28,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#1a0b0b; box-shadow: 0 8px 16px rgba(26,11,11,.18);}
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(59,10,10,.28);
+      color:var(--ink);
+      box-shadow:none;
+      font-weight:800;
+    }
+    button.muted{background:#8b5a5a; box-shadow:none; font-weight:800;}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 16px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      margin:12px 0 14px;
+      backdrop-filter: blur(6px);
+    }
+    .tab{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:none;
+      padding:9px 12px;
+      border-radius:14px;
+      font-weight:900;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-color: rgba(254,202,202,.85);
+    }
+
+    .two{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px;}
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+
+    .panel{
+      background:#fff;
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .q{
+      margin:12px 0;
+      padding:12px;
+      border-radius:14px;
+      background:#fff7f7;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .q .qtitle{font-weight:900; margin-bottom:10px}
+    .opts{display:grid; gap:8px}
+    .opt{
+      display:flex; align-items:flex-start; gap:10px;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.85);
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{margin-top:3px}
+    .opt:hover{border-color: rgba(185,28,28,.45)}
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      color:#1a0b0b;
+      background:#fff;
+      display:none;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(21,128,61,.55); background: rgba(21,128,61,.06)}
+    .feedback.bad{border-color: rgba(185,28,28,.55); background: rgba(185,28,28,.06)}
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.ok{background: rgba(21,128,61,.10); border-color: rgba(21,128,61,.25); color:#166534}
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    /* Simple "table look" */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(254,202,202,.85);
+      background:#fff;
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(254,202,202,.7);
+      font-size:13px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{background:#fff1f1; font-weight:900}
+    tr:last-child td{border-bottom:none}
+    .chip{
+      display:inline-flex; align-items:center;
+      padding:5px 10px;
+      border-radius:999px;
+      background:#fff1f1;
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+      font-size:12px;
+    }
+
+    /* bars */
+    .bars{display:grid; gap:10px; margin-top:6px}
+    .barRow{
+      display:grid; grid-template-columns: 120px 1fr 48px;
+      gap:10px; align-items:center;
+    }
+    @media (max-width: 520px){ .barRow{grid-template-columns:1fr; gap:6px} }
+    .barTrack{height:14px; border-radius:999px; background:#fee2e2; overflow:hidden; border:1px solid rgba(239,68,68,.20)}
+    .barFill{height:100%; width:30%; background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95))}
+
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* completion overlay */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(26,11,11,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(254,202,202,.9);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+
+    /* Institutional marks (your saved standard) */
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+
+    .brand-left img{
+      width:95px; /* standard */
+      height:auto;
+      border-radius:10px;
+      filter:none;     /* no blur */
+      opacity:.35;     /* watermark */
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:1;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+      text-shadow: 0 6px 10px rgba(0,0,0,.5);
+    }
+
+    /* Ordering list */
+    .orderList{display:grid; gap:10px; margin-top:8px}
+    .orderItem{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .orderItem .left{display:flex; gap:10px; align-items:center}
+    .orderItem .num{
+      width:28px; height:28px; display:grid; place-items:center;
+      border-radius:10px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+    }
+    .miniBtn{
+      padding:8px 10px; border-radius:10px; font-weight:900;
+      background:#1a0b0b;
+      box-shadow:none;
+    }
+    .miniBtn.ghost{
+      background:transparent; color:#1a0b0b;
+      border:1px solid rgba(59,10,10,.28);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>ODA Lenguaje | Textos discontinuos</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Reflexiona sobre el uso de textos discontinuos, para resumir y ordenar información.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Actividades">
+    <button class="tab active" id="tab-a1" onclick="go('a1')">Actividad 1</button>
+    <button class="tab" id="tab-a2" onclick="go('a2')">Actividad 2</button>
+    <button class="tab" id="tab-a3" onclick="go('a3')">Actividad 3</button>
+    <button class="tab" id="tab-a4" onclick="go('a4')">Actividad 4</button>
+    <button class="tab" id="tab-final" onclick="go('final')">Cierre</button>
+  </div>
+</header>
+
+<main>
+  <article class="card">
+    <div class="hd">
+      <div>
+        <h2 id="sectionTitle">Actividad 1. ¿Cuál me ayuda más?</h2>
+        <div class="meta" id="sectionMeta">Reflexiona qué texto discontinuo conviene para resumir, ordenar o comparar.</div>
+      </div>
+      <div class="btnrow">
+        <button class="secondary" onclick="resetAll()">Reiniciar ODA</button>
+        <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <!-- ACT 1 -->
+      <section class="page active" id="page-a1">
+        <div class="two">
+          <div class="panel">
+            <h3>La misma información en tres formatos</h3>
+            <p class="small">
+              Observa: <span class="chip">tabla</span> / <span class="chip">línea del tiempo</span> / <span class="chip">gráfica</span>. Luego responde.
+            </p>
+
+            <div class="q">
+              <div class="qtitle">Información: “Actividades del proyecto de lectura”</div>
+              <table aria-label="Tabla de actividades">
+                <thead><tr><th>Día</th><th>Actividad</th></tr></thead>
+                <tbody>
+                  <tr><td>Lunes</td><td>Elegir libro</td></tr>
+                  <tr><td>Martes</td><td>Leer 20 minutos</td></tr>
+                  <tr><td>Miércoles</td><td>Subrayar ideas</td></tr>
+                  <tr><td>Jueves</td><td>Hacer resumen</td></tr>
+                  <tr><td>Viernes</td><td>Compartir en equipo</td></tr>
+                </tbody>
+              </table>
+              <div class="note" style="margin-top:10px">
+                Línea del tiempo: Lunes → Martes → Miércoles → Jueves → Viernes
+              </div>
+              <div class="note" style="margin-top:10px">
+                Gráfica (minutos de lectura por día): Lunes 10 | Martes 20 | Miércoles 20 | Jueves 15 | Viernes 10
+              </div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) Si quieres <u>ordenar</u> qué pasa primero y qué pasa después, conviene usar…</div>
+              <div class="opts" data-q="a1q1">
+                <label class="opt"><input type="radio" name="a1q1" value="a"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a1q1" value="b"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a1q1" value="c"> Poema</label>
+              </div>
+              <div class="feedback" id="fb-a1q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) Si quieres ver <u>cantidades</u> (más/menos) rápido, conviene usar…</div>
+              <div class="opts" data-q="a1q2">
+                <label class="opt"><input type="radio" name="a1q2" value="a"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a1q2" value="b"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a1q2" value="c"> Cuento</label>
+              </div>
+              <div class="feedback" id="fb-a1q2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) Para <u>resumir</u> “Día + Actividad” de forma clara, conviene usar…</div>
+              <div class="opts" data-q="a1q3">
+                <label class="opt"><input type="radio" name="a1q3" value="a"> Tabla</label>
+                <label class="opt"><input type="radio" name="a1q3" value="b"> Adivinanza</label>
+                <label class="opt"><input type="radio" name="a1q3" value="c"> Trabalenguas</label>
+              </div>
+              <div class="feedback" id="fb-a1q3"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a1')">Dame la respuesta</button>
+              <button id="verify-a1" onclick="verify('a1')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a1')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a2')">Siguiente</button>
+            </div>
+
+            <div class="note">
+              Regla anti-trampa: si usas <b>Dame la respuesta</b>, <b>Verifico mi respuesta</b> se deshabilita hasta presionar <b>Nuevos valores / Intentar</b>.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Reflexión breve</h3>
+            <p>Completa mentalmente esta idea (te ayudará en clase):</p>
+            <div class="q">
+              <div class="qtitle">“Uso una línea del tiempo cuando necesito…”</div>
+              <div class="small">ordenar eventos por antes y después.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">“Uso una tabla cuando necesito…”</div>
+              <div class="small">resumir información con categorías (filas y columnas).</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">“Uso una gráfica cuando necesito…”</div>
+              <div class="small">comparar cantidades de manera visual.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 2 -->
+      <section class="page" id="page-a2">
+        <div class="two">
+          <div class="panel">
+            <h3>De texto largo a texto corto</h3>
+            <p>Lee el texto y decide cómo resumirlo con un texto discontinuo.</p>
+
+            <div class="q">
+              <div class="qtitle">Texto</div>
+              <div class="small">
+                “En el salón, 6 niños prefieren leer cuentos, 9 prefieren leer leyendas y 5 prefieren leer poemas.
+                En total, son 20 niños. Queremos ver rápido qué prefieren para organizar la biblioteca del aula.”
+              </div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Qué texto discontinuo ayuda más para ver <u>rápido</u> cuál es la preferencia mayor?</div>
+              <div class="opts" data-q="a2q1">
+                <label class="opt"><input type="radio" name="a2q1" value="a"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a2q1" value="b"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a2q1" value="c"> Carta</label>
+              </div>
+              <div class="feedback" id="fb-a2q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) ¿Qué información se debe conservar al resumir el texto en una gráfica?</div>
+              <div class="opts" data-q="a2q2">
+                <label class="opt"><input type="radio" name="a2q2" value="a"> Los gustos (cuentos, leyendas, poemas) y las cantidades.</label>
+                <label class="opt"><input type="radio" name="a2q2" value="b"> Los adjetivos del texto.</label>
+                <label class="opt"><input type="radio" name="a2q2" value="c"> El nombre de cada niño.</label>
+              </div>
+              <div class="feedback" id="fb-a2q2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) ¿Qué se puede eliminar al resumir, sin perder lo importante?</div>
+              <div class="opts" data-q="a2q3">
+                <label class="opt"><input type="radio" name="a2q3" value="a"> Frases repetidas o detalles que no cambian los datos.</label>
+                <label class="opt"><input type="radio" name="a2q3" value="b"> Las cantidades.</label>
+                <label class="opt"><input type="radio" name="a2q3" value="c"> Las categorías (cuentos, leyendas, poemas).</label>
+              </div>
+              <div class="feedback" id="fb-a2q3"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a2')">Dame la respuesta</button>
+              <button id="verify-a2" onclick="verify('a2')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a2')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a3')">Siguiente</button>
+            </div>
+
+            <div class="note">
+              Reflexión clave: un texto discontinuo “recorta” el texto para dejar solo lo que ayuda a entender y organizar.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Gráfica (resumen del texto)</h3>
+            <p class="small">Aquí está la representación (para comparar rápido):</p>
+            <div class="bars" id="a2Bars"></div>
+
+            <div class="q">
+              <div class="qtitle">Pregunta de reflexión</div>
+              <div class="small">
+                ¿Qué se entiende más rápido aquí: la lista completa en palabras o la gráfica? ¿Por qué?
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 3 -->
+      <section class="page" id="page-a3">
+        <div class="two">
+          <div class="panel">
+            <h3>Ordenar para entender</h3>
+            <p>Ordena los pasos para hacer un resumen. Esto se puede representar como una <b>línea del tiempo</b>.</p>
+
+            <div class="orderList" id="a3Order"></div>
+
+            <div class="btnrow">
+              <button onclick="checkOrder()">Revisar orden</button>
+              <button class="ghost" onclick="shuffleOrder()">Mezclar</button>
+            </div>
+            <div class="feedback" id="fb-a3order"></div>
+
+            <hr style="border:none;border-top:1px solid rgba(254,202,202,.85); margin:14px 0;">
+
+            <div class="q">
+              <div class="qtitle">1) ¿Por qué ordenar pasos ayuda a comprender mejor?</div>
+              <div class="opts" data-q="a3q1">
+                <label class="opt"><input type="radio" name="a3q1" value="a"> Porque muestra qué va primero y qué va después.</label>
+                <label class="opt"><input type="radio" name="a3q1" value="b"> Porque inventa datos nuevos.</label>
+                <label class="opt"><input type="radio" name="a3q1" value="c"> Porque cambia el tema.</label>
+              </div>
+              <div class="feedback" id="fb-a3q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) Para ordenar pasos en el tiempo, el texto discontinuo más adecuado es…</div>
+              <div class="opts" data-q="a3q2">
+                <label class="opt"><input type="radio" name="a3q2" value="a"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a3q2" value="b"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a3q2" value="c"> Adivinanza</label>
+              </div>
+              <div class="feedback" id="fb-a3q2"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a3')">Dame la respuesta</button>
+              <button id="verify-a3" onclick="verify('a3')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a3')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a4')">Siguiente</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Conexión con el PDA</h3>
+            <div class="q">
+              <div class="qtitle">Reflexión</div>
+              <div class="small">
+                Un texto discontinuo no solo “se lee”: también se <b>usa</b> para ordenar ideas y resumir información de forma clara.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 4 -->
+      <section class="page" id="page-a4">
+        <div class="two">
+          <div class="panel">
+            <h3>¿Para qué sirve este texto?</h3>
+            <p>Elige el texto discontinuo que conviene y reflexiona sobre su función.</p>
+
+            <div class="q">
+              <div class="qtitle">1) “Quiero mostrar el resultado de una encuesta (más/menos) de forma rápida.”</div>
+              <div class="opts" data-q="a4q1">
+                <label class="opt"><input type="radio" name="a4q1" value="a"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a4q1" value="b"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a4q1" value="c"> Receta</label>
+              </div>
+              <div class="feedback" id="fb-a4q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) “Quiero resumir una lista de tareas con dos criterios: día y actividad.”</div>
+              <div class="opts" data-q="a4q2">
+                <label class="opt"><input type="radio" name="a4q2" value="a"> Tabla</label>
+                <label class="opt"><input type="radio" name="a4q2" value="b"> Poema</label>
+                <label class="opt"><input type="radio" name="a4q2" value="c"> Chiste</label>
+              </div>
+              <div class="feedback" id="fb-a4q2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) “Quiero ordenar los momentos de un evento (inicio, desarrollo, cierre).”</div>
+              <div class="opts" data-q="a4q3">
+                <label class="opt"><input type="radio" name="a4q3" value="a"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a4q3" value="b"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a4q3" value="c"> Adivinanza</label>
+              </div>
+              <div class="feedback" id="fb-a4q3"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a4')">Dame la respuesta</button>
+              <button id="verify-a4" onclick="verify('a4')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a4')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('final')">Ir al cierre</button>
+            </div>
+
+            <div class="note">
+              Piensa: “¿Qué necesito hacer con la información?” (ordenar, resumir, comparar). Esa pregunta te dice qué texto usar.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Mini-regla para el cuaderno</h3>
+            <div class="q">
+              <div class="small">
+                <b>Ordenar en el tiempo</b> → Línea del tiempo<br>
+                <b>Resumir con categorías</b> → Tabla<br>
+                <b>Comparar cantidades</b> → Gráfica
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="page" id="page-final">
+        <div class="two">
+          <div class="panel">
+            <h3>Cierre de reflexión</h3>
+            <p>Responde mentalmente o en tu cuaderno (sirve para conversación final en clase).</p>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Qué texto discontinuo te ayudó más a ordenar información? ¿Por qué?</div>
+              <div class="small">Pista: piensa en “antes / después”.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">2) ¿Qué texto discontinuo te ayudó más a resumir datos? ¿Por qué?</div>
+              <div class="small">Pista: piensa en “categorías” y “claridad”.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">3) ¿En qué situación real usarías una gráfica?</div>
+              <div class="small">Pista: encuestas o conteos del grupo.</div>
+            </div>
+
+            <div class="btnrow">
+              <button class="muted" onclick="printResults()">Imprimir resultados</button>
+              <button class="ghost" onclick="go('a1')">Volver al inicio</button>
+            </div>
+
+            <div class="note">
+              Nota: La ODA se marca como completada al contestar/verificar todos los reactivos (100% de progreso).
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Resumen de avance</h3>
+            <div class="q">
+              <div class="qtitle">Progreso</div>
+              <div class="small">Reactivos contestados: <b class="mono" id="answeredLabel">0</b> / <b class="mono" id="totalLabel">0</b></div>
+              <div class="small">Aciertos: <b class="mono" id="correctLabel">0</b></div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Tiempo</div>
+              <div class="small">Tiempo total: <b class="mono" id="timeLabel2">00:00</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+</main>
+
+<!-- Completion overlay -->
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="tag ok" style="justify-content:center; margin:0 auto 10px; width:max-content;">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o revisar las actividades.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      <button class="secondary" onclick="hideOverlay()">Cerrar</button>
+      <button onclick="go('final')">Ir al cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institutional marks -->
+<div class="brand-left">
+  <img src="imagenes/escudo.png" alt="Escudo">
+</div>
+<div class="brand-right">
+  <img src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+  // ---------------------------
+  // Global state
+  // ---------------------------
+  const APP = {
+    active: 'a1',
+    timer: { start: null, elapsed: 0, handle: null, running: false },
+    totals: { a1: 3, a2: 3, a3: 3, a4: 3 }, // a3 includes order as 1 + 2 MCQ
+    correct: { a1: 0, a2: 0, a3: 0, a4: 0 },
+    answered: { a1: new Set(), a2: new Set(), a3: new Set(), a4: new Set() },
+    usedHint: { a1:false, a2:false, a3:false, a4:false },
+    orderOk: false,
+    log: []
+  };
+
+  const KEYS = {
+    a1: { a1q1:'b', a1q2:'a', a1q3:'a' },
+    a2: { a2q1:'a', a2q2:'a', a2q3:'a' },
+    a3: { a3q1:'a', a3q2:'a' }, // order handled separately
+    a4: { a4q1:'a', a4q2:'a', a4q3:'a' }
+  };
+
+  const DATA = {
+    a2Bars: [
+      { label:'Cuentos', value: 6 },
+      { label:'Leyendas', value: 9 },
+      { label:'Poemas', value: 5 }
+    ]
+  };
+
+  // ---------------------------
+  // Navigation (tabs)
+  // ---------------------------
+  function go(where){
+    const pages = ['a1','a2','a3','a4','final'];
+    pages.forEach(p=>{
+      document.getElementById('page-'+p).classList.remove('active');
+      const tab = document.getElementById('tab-'+p);
+      if(tab) tab.classList.remove('active');
+    });
+    document.getElementById('page-'+where).classList.add('active');
+    const t = document.getElementById('tab-'+where);
+    if(t) t.classList.add('active');
+
+    APP.active = where;
+
+    if(!APP.timer.running && where !== 'final'){ startTimer(); }
+
+    // render dynamic parts
+    if(where === 'a2'){ renderA2(); }
+    if(where === 'a3'){ renderA3(); }
+
+    // update headings
+    const titleMap = {
+      a1: ['Actividad 1. ¿Cuál me ayuda más?', 'Reflexiona qué texto discontinuo conviene para resumir, ordenar o comparar.'],
+      a2: ['Actividad 2. De texto largo a texto corto', 'Resume información y reflexiona qué se conserva y qué se elimina.'],
+      a3: ['Actividad 3. Ordenar para entender', 'Ordena pasos como una línea del tiempo y explica por qué ayuda.'],
+      a4: ['Actividad 4. ¿Para qué sirve este texto?', 'Elige el texto adecuado según la intención comunicativa.'],
+      final: ['Cierre', 'Reflexión final y resumen de avance.']
+    };
+    const pair = titleMap[where] || titleMap.a1;
+    document.getElementById('sectionTitle').textContent = pair[0];
+    document.getElementById('sectionMeta').textContent = pair[1];
+
+    updateHeader();
+    updateFinalSummary();
+    hideOverlay();
+  }
+
+  // ---------------------------
+  // Timer
+  // ---------------------------
+  function startTimer(){
+    APP.timer.start = Date.now();
+    APP.timer.running = true;
+    APP.timer.handle = setInterval(()=>{
+      const now = Date.now();
+      APP.timer.elapsed = Math.floor((now - APP.timer.start)/1000);
+      document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+      const t2 = document.getElementById('timeLabel2');
+      if(t2) t2.textContent = fmtTime(APP.timer.elapsed);
+    }, 250);
+  }
+  function stopTimer(){
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer.handle = null;
+    APP.timer.running = false;
+  }
+  function fmtTime(s){
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return mm+':'+ss;
+  }
+
+  // ---------------------------
+  // Progress & scoring
+  // ---------------------------
+  function totalQuestionsAll(){
+    return APP.totals.a1 + APP.totals.a2 + APP.totals.a3 + APP.totals.a4;
+  }
+  function answeredAllCount(){
+    return APP.answered.a1.size + APP.answered.a2.size + APP.answered.a3.size + APP.answered.a4.size;
+  }
+  function correctAllCount(){
+    return APP.correct.a1 + APP.correct.a2 + APP.correct.a3 + APP.correct.a4;
+  }
+  function percent(x, total){
+    if(total<=0) return 0;
+    return Math.round((x/total)*100);
+  }
+  function updateHeader(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    document.getElementById('progLabel').textContent = prog + '%';
+    document.getElementById('progBar').style.width = prog + '%';
+    document.getElementById('scoreLabel').textContent = sc + '%';
+
+    if(prog >= 100){
+      showOverlay();
+      stopTimer();
+    }
+  }
+
+  function updateFinalSummary(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const a = document.getElementById('answeredLabel');
+    const t = document.getElementById('totalLabel');
+    const c = document.getElementById('correctLabel');
+    if(a) a.textContent = ans;
+    if(t) t.textContent = total;
+    if(c) c.textContent = cor;
+  }
+
+  // ---------------------------
+  // Anti-trampa: hint / attempt
+  // ---------------------------
+  function hint(act){
+    APP.usedHint[act] = true;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = true;
+
+    let msg = '';
+    if(act === 'a1'){ msg = 'Respuestas: 1) B (línea del tiempo) | 2) A (gráfica) | 3) A (tabla)'; }
+    if(act === 'a2'){ msg = 'Respuestas: 1) A (gráfica) | 2) A (gustos y cantidades) | 3) A (detalles repetidos)'; }
+    if(act === 'a3'){ msg = 'Orden: Leer → Subrayar → Elegir ideas → Escribir resumen → Revisar. Preguntas: 1) A | 2) A'; }
+    if(act === 'a4'){ msg = 'Respuestas: 1) A (gráfica) | 2) A (tabla) | 3) A (línea del tiempo)'; }
+
+    flashNote(msg || 'Respuestas mostradas.');
+  }
+  function newAttempt(act){
+    APP.usedHint[act] = false;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = false;
+    flashNote('Listo: puedes volver a verificar.');
+  }
+  function flashNote(text){
+    const el = document.createElement('div');
+    el.style.position='fixed';
+    el.style.left='50%';
+    el.style.top='18px';
+    el.style.transform='translateX(-50%)';
+    el.style.background='rgba(255,255,255,.94)';
+    el.style.border='1px solid rgba(254,202,202,.95)';
+    el.style.boxShadow='0 18px 40px rgba(0,0,0,.28)';
+    el.style.padding='10px 12px';
+    el.style.borderRadius='14px';
+    el.style.maxWidth='900px';
+    el.style.width='calc(100% - 28px)';
+    el.style.zIndex='99999';
+    el.style.color='#1a0b0b';
+    el.style.fontWeight='900';
+    el.style.fontSize='13px';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+    setTimeout(()=>{ el.remove(); }, 2600);
+  }
+
+  // ---------------------------
+  // Verify MCQ
+  // ---------------------------
+  function verify(act){
+    if(APP.usedHint[act]){
+      flashNote('Primero presiona "Nuevos valores / Intentar" para habilitar la verificación.');
+      return;
+    }
+
+    // Special: a3 includes order activity as a synthetic qid
+    if(act === 'a3'){
+      if(APP.orderChecked){
+        // already marked in checkOrder
+      } else {
+        // require checkOrder to count the ordering item
+      }
+    }
+
+    const keys = KEYS[act];
+    if(!keys) return;
+
+    for(const [qid, correctVal] of Object.entries(keys)){
+      const chosen = document.querySelector('input[name="'+qid+'"]:checked');
+      const fb = document.getElementById('fb-'+qid);
+      if(!fb) continue;
+
+      if(!chosen){
+        fb.className='feedback show';
+        fb.textContent='Elige una opción antes de verificar.';
+        continue;
+      }
+
+      const ok = chosen.value === correctVal;
+      fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+      fb.textContent = ok ? 'Correcto.' : ('Aún no. Respuesta correcta: ' + correctVal.toUpperCase() + '.');
+
+      if(!APP.answered[act].has(qid)){
+        APP.answered[act].add(qid);
+        if(ok) APP.correct[act] += 1;
+        APP.log.push({ act, qid, ok });
+      }
+    }
+
+    updateHeader();
+    updateFinalSummary();
+  }
+
+  // ---------------------------
+  // Activity 2 bars
+  // ---------------------------
+  function renderA2(){
+    drawBars('a2Bars', DATA.a2Bars);
+  }
+  function drawBars(containerId, items){
+    const max = Math.max.apply(null, items.map(x=>x.value).concat([1]));
+    const wrap = document.getElementById(containerId);
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className='barRow';
+      const pct = Math.round((it.value/max)*100);
+      row.innerHTML =
+        '<div><b>'+it.label+'</b></div>'+
+        '<div class="barTrack"><div class="barFill" style="width:'+pct+'%"></div></div>'+
+        '<div class="mono" style="text-align:right"><b>'+it.value+'</b></div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------------------------
+  // Activity 3 ordering
+  // ---------------------------
+  const ORDER_CORRECT = ['Leer el texto', 'Subrayar ideas importantes', 'Elegir ideas principales', 'Escribir el resumen', 'Revisar y mejorar'];
+  let orderItems = [];
+  APP.orderChecked = false;
+
+  function renderA3(){
+    if(orderItems.length === 0){
+      orderItems = [...ORDER_CORRECT];
+      shuffleOrder();
+    } else {
+      drawOrder();
+    }
+  }
+  function shuffleOrder(){
+    orderItems = [...ORDER_CORRECT].sort(()=>Math.random()-0.5);
+    drawOrder();
+    APP.orderOk = false;
+    APP.orderChecked = false;
+    const fb = document.getElementById('fb-a3order');
+    if(fb){ fb.className='feedback'; fb.textContent=''; }
+  }
+  function drawOrder(){
+    const wrap = document.getElementById('a3Order');
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    orderItems.forEach((txt, idx)=>{
+      const row = document.createElement('div');
+      row.className='orderItem';
+      row.innerHTML =
+        '<div class="left">'+
+          '<div class="num">'+(idx+1)+'</div>'+
+          '<div><b>'+txt+'</b></div>'+
+        '</div>'+
+        '<div class="btnrow" style="gap:8px;">'+
+          '<button class="miniBtn ghost" onclick="moveUp('+idx+')">▲</button>'+
+          '<button class="miniBtn ghost" onclick="moveDown('+idx+')">▼</button>'+
+        '</div>';
+      wrap.appendChild(row);
+    });
+  }
+  function moveUp(i){
+    if(i<=0) return;
+    const tmp = orderItems[i-1];
+    orderItems[i-1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+  function moveDown(i){
+    if(i>=orderItems.length-1) return;
+    const tmp = orderItems[i+1];
+    orderItems[i+1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+
+  function checkOrder(){
+    const ok = orderItems.join('|') === ORDER_CORRECT.join('|');
+    APP.orderOk = ok;
+    APP.orderChecked = true;
+
+    const fb = document.getElementById('fb-a3order');
+    if(fb){
+      fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+      fb.textContent = ok
+        ? '¡Correcto! Ordenaste los pasos como una línea del tiempo.'
+        : 'Aún no. Revisa qué va primero y qué va al final.';
+    }
+
+    // Mark as answered (synthetic qid) only once
+    const qid = 'a3order';
+    if(!APP.answered.a3.has(qid)){
+      APP.answered.a3.add(qid);
+      if(ok) APP.correct.a3 += 1;
+      APP.log.push({ act:'a3', qid, ok });
+    }
+
+    updateHeader();
+    updateFinalSummary();
+  }
+
+  // ---------------------------
+  // Completion overlay
+  // ---------------------------
+  function showOverlay(){
+    const el = document.getElementById('overlay');
+    el.classList.add('show');
+    setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+  }
+  function hideOverlay(){
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ---------------------------
+  // Print results
+  // ---------------------------
+  function printResults(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    const now = new Date();
+    const fecha = now.toLocaleString('es-MX');
+
+    const report = (
+      '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+      '<title>Resultados ODA</title>'+
+      '<style>body{font-family:Arial,sans-serif;margin:24px;color:#111827}h1{margin:0 0 6px}.muted{color:#6b7280}.box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#f8fafc}.k{font-weight:700}</style>'+
+      '</head><body>'+
+      '<h1>Resultados de la ODA: Textos discontinuos (Lenguaje)</h1>'+
+      '<div class="muted">Fecha y hora: '+fecha+'</div>'+
+      '<div class="box">'+
+        '<div><span class="k">Tiempo:</span> '+fmtTime(APP.timer.elapsed)+'</div>'+
+        '<div><span class="k">Progreso:</span> '+prog+'%</div>'+
+        '<div><span class="k">Aciertos:</span> '+sc+'% ('+cor+'/'+total+')</div>'+
+      '</div>'+
+      '<div class="box"><div class="k">Nombre del alumno:</div><div style="height:28px;border-bottom:1px solid #e5e7eb;margin-top:8px"></div></div>'+
+      '<div class="box"><div class="k">Detalle (primer intento):</div>'+
+        '<table><thead><tr><th>Actividad</th><th>Reactivo</th><th>Resultado</th></tr></thead><tbody>'+
+          APP.log.slice(0,300).map(x =>
+            '<tr><td>'+String(x.act).toUpperCase()+'</td><td>'+x.qid+'</td><td>'+(x.ok?'Correcto':'Incorrecto')+'</td></tr>'
+          ).join('')+
+        '</tbody></table>'+
+        '<div class="muted" style="margin-top:8px;">Autor: El Ruso</div>'+
+      '</div>'+
+      '</body></html>'
+    );
+
+    const w = window.open('', '_blank');
+    if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+    w.document.open();
+    w.document.write(report);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  // ---------------------------
+  // Reset all
+  // ---------------------------
+  function resetAll(){
+    hideOverlay();
+
+    // clear all radios
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked = false);
+
+    // clear feedback
+    document.querySelectorAll('.feedback').forEach(f=> { f.className='feedback'; f.textContent=''; });
+
+    // reset state
+    for(const k of ['a1','a2','a3','a4']){
+      APP.answered[k].clear();
+      APP.correct[k]=0;
+      APP.usedHint[k]=false;
+      const vb = document.getElementById('verify-'+k);
+      if(vb) vb.disabled = false;
+    }
+    APP.log = [];
+    APP.orderOk = false;
+    APP.orderChecked = false;
+    orderItems = [];
+    renderA2();
+    renderA3();
+
+    // restart timer
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer = { start: Date.now(), elapsed: 0, handle: null, running: false };
+    startTimer();
+
+    updateHeader();
+    updateFinalSummary();
+    flashNote('ODA reiniciada.');
+    go('a1');
+  }
+
+  // Init
+  renderA2();
+  updateHeader();
+  updateFinalSummary();
+  startTimer();
+</script>
+
+</body>
+</html>

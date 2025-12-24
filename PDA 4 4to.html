@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Textos discontinuos | ODA (Punto y coma)</title>
+  <style>
+    :root{
+      /* Lenguaje (rojo) */
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --card:#ffffff;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --soft:#fee2e2;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{margin:0; font-size: clamp(20px, 2.4vw, 30px); letter-spacing:.2px;}
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.88); max-width:980px; line-height:1.35}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .pill b{font-weight:800}
+    .pill span{color:rgba(255,255,255,.92)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1a0b0b;
+      color:#fff;
+      display:inline-block;
+    }
+    .progressWrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+    .bar{
+      width: 240px; height: 12px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 16px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      margin:12px auto 14px;
+      backdrop-filter: blur(6px);
+      max-width:1100px;
+    }
+    .tab{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:none;
+      padding:9px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-color: rgba(254,202,202,.85);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding:0 16px 0}
+    .card{
+      background:rgba(255,255,255,.93);
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(254,202,202,.75);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+    .card .bd{padding:16px}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none;
+      background:var(--accent); color:#fff;
+      padding:10px 14px; border-radius:12px;
+      cursor:pointer; font-weight:900;
+      box-shadow: 0 10px 18px rgba(185,28,28,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#1a0b0b; box-shadow: 0 8px 16px rgba(26,11,11,.18);}
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(59,10,10,.28);
+      color:var(--ink);
+      box-shadow:none;
+      font-weight:900;
+    }
+    button.muted{background:#8b5a5a; box-shadow:none; font-weight:900;}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .two{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px;}
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+
+    .panel{
+      background:#fff;
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .small{font-size:13px; color:var(--muted); line-height:1.35}
+
+    .q{
+      margin:12px 0;
+      padding:12px;
+      border-radius:14px;
+      background:#fff7f7;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .q .qtitle{font-weight:900; margin-bottom:10px}
+    .inlineCode{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 6px;
+      border-radius:10px;
+      background:#fff1f1;
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:800;
+    }
+
+    .opts{display:grid; gap:8px}
+    .opt{
+      display:flex; align-items:flex-start; gap:10px;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.85);
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{margin-top:3px}
+    .opt:hover{border-color: rgba(185,28,28,.45)}
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      color:#1a0b0b;
+      background:#fff;
+      display:none;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(21,128,61,.55); background: rgba(21,128,61,.06)}
+    .feedback.bad{border-color: rgba(185,28,28,.55); background: rgba(185,28,28,.06)}
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(254,202,202,.85);
+      background:#fff;
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(254,202,202,.7);
+      font-size:13px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{background:#fff1f1; font-weight:900}
+    tr:last-child td{border-bottom:none}
+
+    textarea, input[type="text"]{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(254,202,202,.95);
+      background:#fff;
+      color:var(--ink);
+      font-weight:800;
+      outline:none;
+    }
+    textarea{min-height:86px; resize:vertical; font-weight:800}
+
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* completion overlay */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(26,11,11,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(254,202,202,.9);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.ok{background: rgba(21,128,61,.10); border-color: rgba(21,128,61,.25); color:#166534}
+
+    /* Institutional marks (saved standard) */
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+    .brand-left img{
+      width:95px;
+      height:auto;
+      border-radius:10px;
+      filter:none;
+      opacity:.35;
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:1;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+      text-shadow: 0 6px 10px rgba(0,0,0,.5);
+    }
+
+    .stamp{
+      display:inline-block;
+      padding:8px 10px;
+      border-radius:14px;
+      background:#fff;
+      border:1px dashed rgba(239,68,68,.45);
+      color:#1a0b0b;
+      font-weight:900;
+      font-size:13px;
+      margin-top:8px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>Textos discontinuos | ODA</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Emplea signos de puntuación como el punto y la coma.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Actividades">
+  <button class="tab active" id="tab-a1" onclick="go('a1')">Actividad 1</button>
+  <button class="tab" id="tab-a2" onclick="go('a2')">Actividad 2</button>
+  <button class="tab" id="tab-a3" onclick="go('a3')">Actividad 3</button>
+  <button class="tab" id="tab-a4" onclick="go('a4')">Actividad 4</button>
+  <button class="tab" id="tab-final" onclick="go('final')">Cierre</button>
+</div>
+
+<main>
+  <article class="card">
+    <div class="hd">
+      <div>
+        <h2 id="sectionTitle">Actividad 1. Punto y coma en la tabla</h2>
+        <div class="meta" id="sectionMeta">Corrige la puntuación para que la información se entienda sin confusiones.</div>
+      </div>
+      <div class="btnrow">
+        <button class="secondary" onclick="resetAll()">Reiniciar ODA</button>
+        <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      </div>
+    </div>
+
+    <div class="bd">
+
+      <!-- ACT 1 -->
+      <section class="page active" id="page-a1">
+        <div class="two">
+          <div class="panel">
+            <h3>Tabla con errores de puntuación</h3>
+            <p>En una tabla, a veces hay más de una acción en la misma celda. Usa <b>coma</b> y <b>punto</b> para que otros entiendan.</p>
+
+            <div class="q">
+              <div class="qtitle">Lee la tabla (tiene errores)</div>
+              <table>
+                <thead><tr><th>Día</th><th>Actividades</th></tr></thead>
+                <tbody>
+                  <tr><td>Lunes</td><td>Elegir libro, leer 10 minutos. subrayar ideas</td></tr>
+                  <tr><td>Martes</td><td>Leer 20 minutos, hacer resumen, compartir</td></tr>
+                  <tr><td>Miércoles</td><td>Hacer cartel. invitar a otro grupo, practicar</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Qué corrección es la mejor para el lunes?</div>
+              <div class="opts" data-q="a1q1">
+                <label class="opt"><input type="radio" name="a1q1" value="a"> Elegir libro, leer 10 minutos, subrayar ideas.</label>
+                <label class="opt"><input type="radio" name="a1q1" value="b"> Elegir libro leer 10 minutos subrayar ideas</label>
+                <label class="opt"><input type="radio" name="a1q1" value="c"> Elegir libro. leer 10 minutos subrayar ideas</label>
+              </div>
+              <div class="feedback" id="fb-a1q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) ¿Para qué sirve la <b>coma</b> en una lista de acciones?</div>
+              <div class="opts" data-q="a1q2">
+                <label class="opt"><input type="radio" name="a1q2" value="a"> Para separar acciones dentro de la misma idea.</label>
+                <label class="opt"><input type="radio" name="a1q2" value="b"> Para terminar por completo el texto.</label>
+                <label class="opt"><input type="radio" name="a1q2" value="c"> Para cambiar el tema.</label>
+              </div>
+              <div class="feedback" id="fb-a1q2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) ¿Para qué sirve el <b>punto</b>?</div>
+              <div class="opts" data-q="a1q3">
+                <label class="opt"><input type="radio" name="a1q3" value="a"> Para cerrar una idea completa.</label>
+                <label class="opt"><input type="radio" name="a1q3" value="b"> Para separar palabras al azar.</label>
+                <label class="opt"><input type="radio" name="a1q3" value="c"> Para poner color al texto.</label>
+              </div>
+              <div class="feedback" id="fb-a1q3"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a1')">Dame la respuesta</button>
+              <button id="verify-a1" onclick="verify('a1')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a1')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a2')">Siguiente</button>
+            </div>
+
+            <div class="note">
+              Anti-trampa: si usas <b>Dame la respuesta</b>, la verificación se deshabilita hasta <b>Nuevos valores / Intentar</b>.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Mini-regla (muy clara)</h3>
+            <div class="q">
+              <div class="qtitle">Coma <span class="inlineCode">,</span></div>
+              <div class="small">Separa elementos de una lista: “Trae lápiz, cuaderno y colores”.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Punto <span class="inlineCode">.</span></div>
+              <div class="small">Cierra una idea completa: “Hoy leímos un cuento.”</div>
+            </div>
+            <div class="stamp">Meta: que tu tabla se lea fácil para otra persona.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 2 -->
+      <section class="page" id="page-a2">
+        <div class="two">
+          <div class="panel">
+            <h3>Línea del tiempo: puntuar para explicar</h3>
+            <p>En una línea del tiempo, cada paso puede tener una explicación. Usa <b>coma</b> y <b>punto</b> para que se entienda.</p>
+
+            <div class="q">
+              <div class="qtitle">Orden de eventos (línea del tiempo)</div>
+              <div class="small"><b>Inicio → Desarrollo → Cierre</b></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) Elige la opción mejor puntuada para “Inicio”</div>
+              <div class="opts" data-q="a2q1">
+                <label class="opt"><input type="radio" name="a2q1" value="a"> Inicio: saludo, presento el tema. </label>
+                <label class="opt"><input type="radio" name="a2q1" value="b"> Inicio saludo presento el tema </label>
+                <label class="opt"><input type="radio" name="a2q1" value="c"> Inicio; saludo presento el tema </label>
+              </div>
+              <div class="feedback" id="fb-a2q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) ¿Qué opción está mejor para “Desarrollo”?</div>
+              <div class="opts" data-q="a2q2">
+                <label class="opt"><input type="radio" name="a2q2" value="a"> Desarrollo: explico, doy un ejemplo, respondo preguntas.</label>
+                <label class="opt"><input type="radio" name="a2q2" value="b"> Desarrollo explico doy un ejemplo respondo preguntas</label>
+                <label class="opt"><input type="radio" name="a2q2" value="c"> Desarrollo. explico doy un ejemplo respondo preguntas</label>
+              </div>
+              <div class="feedback" id="fb-a2q2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) Completa con punto o coma (escribe el texto)</div>
+              <div class="small">“Cierre: agradezco ____ me despido ____ dejo una idea final ____”</div>
+              <input type="text" id="a2_fill" placeholder="Ejemplo: , , ." />
+              <div class="feedback" id="fb-a2fill"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a2')">Dame la respuesta</button>
+              <button id="verify-a2" onclick="verify('a2')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a2')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a3')">Siguiente</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Consejo para exponer</h3>
+            <div class="q">
+              <div class="qtitle">La puntuación ayuda a:</div>
+              <div class="small">respirar, entender, y separar ideas para que el público no se confunda.</div>
+            </div>
+            <div class="stamp">Si una frase se entiende mejor, tu exposición mejora.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 3 -->
+      <section class="page" id="page-a3">
+        <div class="two">
+          <div class="panel">
+            <h3>Gráfica: conclusiones con punto y coma</h3>
+            <p>Una gráfica también se lee y se explica. Escribe conclusiones con coma y punto.</p>
+
+            <div class="q">
+              <div class="qtitle">Datos de lectura (minutos por día)</div>
+              <table>
+                <thead><tr><th>Día</th><th>Minutos</th></tr></thead>
+                <tbody>
+                  <tr><td>Lunes</td><td>10</td></tr>
+                  <tr><td>Martes</td><td>20</td></tr>
+                  <tr><td>Miércoles</td><td>20</td></tr>
+                  <tr><td>Jueves</td><td>15</td></tr>
+                  <tr><td>Viernes</td><td>10</td></tr>
+                </tbody>
+              </table>
+              <div class="small" style="margin-top:10px">Interpreta: ¿qué día tiene más minutos? ¿cuál menos?</div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) Elige la mejor conclusión (bien puntuada)</div>
+              <div class="opts" data-q="a3q1">
+                <label class="opt"><input type="radio" name="a3q1" value="a"> Martes y miércoles tienen más minutos, leímos 20; lunes y viernes tienen menos, leímos 10.</label>
+                <label class="opt"><input type="radio" name="a3q1" value="b"> Martes y miércoles tienen más minutos leímos 20 lunes y viernes tienen menos leímos 10</label>
+                <label class="opt"><input type="radio" name="a3q1" value="c"> Martes y miércoles. tienen más minutos, leímos 20 lunes y viernes, tienen menos leímos 10</label>
+              </div>
+              <div class="feedback" id="fb-a3q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) Escribe una conclusión para exponer (usa coma y punto)</div>
+              <textarea id="a3_text" placeholder="Ejemplo: El martes y miércoles leímos más, 20 minutos. El jueves fue intermedio, 15 minutos."></textarea>
+              <div class="feedback" id="fb-a3text"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a3')">Dame la respuesta</button>
+              <button id="verify-a3" onclick="verify('a3')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a3')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a4')">Siguiente</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Mini-checador de texto</h3>
+            <div class="q">
+              <div class="qtitle">¿Tu conclusión tiene…?</div>
+              <div class="small">
+                1) Al menos una <b>coma</b> para separar ideas.<br>
+                2) Al menos un <b>punto</b> para cerrar una idea.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 4 -->
+      <section class="page" id="page-a4">
+        <div class="two">
+          <div class="panel">
+            <h3>Corrección final: puntúo para que entiendas</h3>
+            <p>Corrige el texto de cada ejemplo. Debe quedar claro para otra persona.</p>
+
+            <div class="q">
+              <div class="qtitle">1) Corrige esta lista de acciones</div>
+              <div class="small">Texto con errores: <span class="inlineCode">Trae lápiz cuaderno colores borrador</span></div>
+              <input type="text" id="a4_fix1" placeholder="Escribe la versión corregida aquí" />
+              <div class="feedback" id="fb-a4fix1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) Corrige este mensaje</div>
+              <div class="small">Texto con errores: <span class="inlineCode">Hoy leímos un cuento mañana haremos resumen</span></div>
+              <input type="text" id="a4_fix2" placeholder="Escribe la versión corregida aquí" />
+              <div class="feedback" id="fb-a4fix2"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) Elige la mejor versión</div>
+              <div class="opts" data-q="a4q1">
+                <label class="opt"><input type="radio" name="a4q1" value="a"> Invitamos a otro grupo, practicamos; al final, agradecemos.</label>
+                <label class="opt"><input type="radio" name="a4q1" value="b"> Invitamos a otro grupo practicamos al final agradecemos</label>
+                <label class="opt"><input type="radio" name="a4q1" value="c"> Invitamos. a otro grupo practicamos; al final agradecemos</label>
+              </div>
+              <div class="feedback" id="fb-a4q1"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a4')">Dame la respuesta</button>
+              <button id="verify-a4" onclick="verify('a4')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a4')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('final')">Ir al cierre</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Frase para cerrar</h3>
+            <div class="q">
+              <div class="qtitle">“Pongo comas cuando…”</div>
+              <div class="small">separo elementos de una lista o ideas cercanas.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">“Pongo punto cuando…”</div>
+              <div class="small">termino una idea completa.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="page" id="page-final">
+        <div class="two">
+          <div class="panel">
+            <h3>Cierre</h3>
+            <p>Responde mentalmente o en tu cuaderno:</p>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Dónde te ayuda más la coma: en una tabla, una línea del tiempo o una gráfica?</div>
+              <div class="small">Piensa: cuando hay listas o varias acciones.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">2) ¿Para qué sirve el punto cuando expones?</div>
+              <div class="small">Piensa: cerrar ideas y hacer pausas.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">3) ¿Qué cambió cuando corregiste la puntuación?</div>
+              <div class="small">Piensa: claridad y comprensión.</div>
+            </div>
+
+            <div class="btnrow">
+              <button class="muted" onclick="printResults()">Imprimir resultados</button>
+              <button class="ghost" onclick="go('a1')">Volver al inicio</button>
+            </div>
+
+            <div class="note">La ODA se completa al verificar todo (100% progreso). Puedes imprimir resultados para evidencia.</div>
+          </div>
+
+          <div class="panel">
+            <h3>Resumen de avance</h3>
+            <div class="q">
+              <div class="qtitle">Progreso</div>
+              <div class="small">Reactivos contestados: <b class="mono" id="answeredLabel">0</b> / <b class="mono" id="totalLabel">0</b></div>
+              <div class="small">Aciertos: <b class="mono" id="correctLabel">0</b></div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Tiempo</div>
+              <div class="small">Tiempo total: <b class="mono" id="timeLabel2">00:00</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+</main>
+
+<!-- Completion overlay -->
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="tag ok" style="justify-content:center; margin:0 auto 10px; width:max-content;">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o revisar las actividades.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      <button class="secondary" onclick="hideOverlay()">Cerrar</button>
+      <button onclick="go('final')">Ir al cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institutional marks -->
+<div class="brand-left">
+  <img src="imagenes/escudo.png" alt="Escudo">
+</div>
+<div class="brand-right">
+  <img src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+  // ---------------------------
+  // Global state
+  // ---------------------------
+  const APP = {
+    active: 'a1',
+    timer: { start: null, elapsed: 0, handle: null, running: false },
+    totals: { a1: 3, a2: 3, a3: 2, a4: 3 },
+    correct: { a1: 0, a2: 0, a3: 0, a4: 0 },
+    answered: { a1: new Set(), a2: new Set(), a3: new Set(), a4: new Set() },
+    usedHint: { a1:false, a2:false, a3:false, a4:false },
+    log: []
+  };
+
+  const KEYS = {
+    a1: { a1q1:'a', a1q2:'a', a1q3:'a' },
+    a2: { a2q1:'a', a2q2:'a' }, // a2_fill checked separately
+    a3: { a3q1:'a' },           // a3_text checked separately
+    a4: { a4q1:'a' }            // a4 fixes checked separately
+  };
+
+  // ---------------------------
+  // Navigation
+  // ---------------------------
+  function go(where){
+    const pages = ['a1','a2','a3','a4','final'];
+    pages.forEach(p=>{
+      document.getElementById('page-'+p).classList.remove('active');
+      const tab = document.getElementById('tab-'+p);
+      if(tab) tab.classList.remove('active');
+    });
+    document.getElementById('page-'+where).classList.add('active');
+    const t = document.getElementById('tab-'+where);
+    if(t) t.classList.add('active');
+
+    APP.active = where;
+    if(!APP.timer.running && where !== 'final'){ startTimer(); }
+
+    const titleMap = {
+      a1: ['Actividad 1. Punto y coma en la tabla', 'Corrige la puntuación para que la información se entienda sin confusiones.'],
+      a2: ['Actividad 2. Puntúo para explicar en una línea del tiempo', 'Elige la mejor puntuación y completa con coma y punto.'],
+      a3: ['Actividad 3. Conclusiones de gráfica', 'Redacta conclusiones con coma y punto para exponer datos.'],
+      a4: ['Actividad 4. Corrijo para que entiendas', 'Corrige textos y elige la versión mejor puntuada.'],
+      final: ['Cierre', 'Reflexión final y resumen de avance.']
+    };
+    const pair = titleMap[where] || titleMap.a1;
+    document.getElementById('sectionTitle').textContent = pair[0];
+    document.getElementById('sectionMeta').textContent = pair[1];
+
+    updateHeader();
+    updateFinalSummary();
+    hideOverlay();
+  }
+
+  // ---------------------------
+  // Timer
+  // ---------------------------
+  function startTimer(){
+    APP.timer.start = Date.now();
+    APP.timer.running = true;
+    APP.timer.handle = setInterval(()=>{
+      const now = Date.now();
+      APP.timer.elapsed = Math.floor((now - APP.timer.start)/1000);
+      document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+      const t2 = document.getElementById('timeLabel2');
+      if(t2) t2.textContent = fmtTime(APP.timer.elapsed);
+    }, 250);
+  }
+  function stopTimer(){
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer.handle = null;
+    APP.timer.running = false;
+  }
+  function fmtTime(s){
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return mm+':'+ss;
+  }
+
+  // ---------------------------
+  // Progress & scoring
+  // ---------------------------
+  function totalQuestionsAll(){ return APP.totals.a1 + APP.totals.a2 + APP.totals.a3 + APP.totals.a4; }
+  function answeredAllCount(){ return APP.answered.a1.size + APP.answered.a2.size + APP.answered.a3.size + APP.answered.a4.size; }
+  function correctAllCount(){ return APP.correct.a1 + APP.correct.a2 + APP.correct.a3 + APP.correct.a4; }
+  function percent(x, total){ return total<=0 ? 0 : Math.round((x/total)*100); }
+
+  function updateHeader(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    document.getElementById('progLabel').textContent = prog + '%';
+    document.getElementById('progBar').style.width = prog + '%';
+    document.getElementById('scoreLabel').textContent = sc + '%';
+
+    if(prog >= 100){
+      showOverlay();
+      stopTimer();
+    }
+  }
+
+  function updateFinalSummary(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const a = document.getElementById('answeredLabel');
+    const t = document.getElementById('totalLabel');
+    const c = document.getElementById('correctLabel');
+    if(a) a.textContent = ans;
+    if(t) t.textContent = total;
+    if(c) c.textContent = cor;
+  }
+
+  // ---------------------------
+  // Anti-trampa
+  // ---------------------------
+  function hint(act){
+    APP.usedHint[act] = true;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = true;
+
+    let msg = '';
+    if(act === 'a1'){ msg = 'A1: 1) A 2) A 3) A'; }
+    if(act === 'a2'){ msg = 'A2: 1) A 2) A 3) Completa con: ", , ."'; }
+    if(act === 'a3'){ msg = 'A3: 1) A 2) Escribe con comas y puntos (mínimo 1 y 1).'; }
+    if(act === 'a4'){ msg = 'A4: 1) Trae lápiz, cuaderno, colores, borrador. 2) Hoy leímos un cuento. Mañana haremos resumen. 3) A'; }
+
+    flashNote(msg || 'Respuestas mostradas.');
+  }
+  function newAttempt(act){
+    APP.usedHint[act] = false;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = false;
+    flashNote('Listo: puedes volver a verificar.');
+  }
+  function flashNote(text){
+    const el = document.createElement('div');
+    el.style.position='fixed';
+    el.style.left='50%';
+    el.style.top='18px';
+    el.style.transform='translateX(-50%)';
+    el.style.background='rgba(255,255,255,.94)';
+    el.style.border='1px solid rgba(254,202,202,.95)';
+    el.style.boxShadow='0 18px 40px rgba(0,0,0,.28)';
+    el.style.padding='10px 12px';
+    el.style.borderRadius='14px';
+    el.style.maxWidth='900px';
+    el.style.width='calc(100% - 28px)';
+    el.style.zIndex='99999';
+    el.style.color='#1a0b0b';
+    el.style.fontWeight='900';
+    el.style.fontSize='13px';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+    setTimeout(()=>{ el.remove(); }, 2600);
+  }
+
+  // ---------------------------
+  // Verification
+  // ---------------------------
+  function verify(act){
+    if(APP.usedHint[act]){
+      flashNote('Primero presiona "Nuevos valores / Intentar" para habilitar la verificación.');
+      return;
+    }
+
+    // Special production checks
+    if(act === 'a2'){ checkA2Fill(); }
+    if(act === 'a3'){ checkA3Text(); }
+    if(act === 'a4'){ checkA4Fixes(); }
+
+    // MCQ checks
+    const keys = KEYS[act];
+    if(keys){
+      for(const [qid, correctVal] of Object.entries(keys)){
+        const chosen = document.querySelector('input[name="'+qid+'"]:checked');
+        const fb = document.getElementById('fb-'+qid);
+        if(!fb) continue;
+
+        if(!chosen){
+          fb.className='feedback show';
+          fb.textContent='Elige una opción antes de verificar.';
+          continue;
+        }
+
+        const ok = chosen.value === correctVal;
+        fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+        fb.textContent = ok ? 'Correcto.' : ('Aún no. Respuesta correcta: ' + correctVal.toUpperCase() + '.');
+
+        if(!APP.answered[act].has(qid)){
+          APP.answered[act].add(qid);
+          if(ok) APP.correct[act] += 1;
+          APP.log.push({ act, qid, ok });
+        }
+      }
+    }
+
+    updateHeader();
+    updateFinalSummary();
+  }
+
+  // A2 fill: expecting ", , ." (allow spaces)
+  function checkA2Fill(){
+    const val = (document.getElementById('a2_fill').value || '').replace(/\s+/g,'').trim();
+    const fb = document.getElementById('fb-a2fill');
+    const qid = 'a2fill';
+    if(!val){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Escribe los signos para completar el texto.';
+      return;
+    }
+    const ok = (val === ',,.' || val === ',,.' ); // same after space removal
+    fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok ? 'Correcto: primero coma, luego coma, y al final punto.' : 'Casi. Recuerda: dos comas y al final un punto.';
+    if(!APP.answered.a2.has(qid)){
+      APP.answered.a2.add(qid);
+      if(ok) APP.correct.a2 += 1;
+      APP.log.push({ act:'a2', qid, ok });
+    }
+  }
+
+  // A3 text: must include at least one comma and one period
+  function checkA3Text(){
+    const txt = (document.getElementById('a3_text').value || '').trim();
+    const fb = document.getElementById('fb-a3text');
+    const qid = 'a3text';
+    if(!txt){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Escribe una conclusión para exponer.';
+      return;
+    }
+    const hasComma = txt.includes(',');
+    const hasDot = txt.includes('.');
+    const ok = hasComma && hasDot && txt.length >= 20;
+    fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok ? 'Muy bien: usaste coma y punto para que la idea se entienda.' : 'Revisa: incluye al menos una coma y un punto (y que el texto sea claro).';
+    if(!APP.answered.a3.has(qid)){
+      APP.answered.a3.add(qid);
+      if(ok) APP.correct.a3 += 1;
+      APP.log.push({ act:'a3', qid, ok });
+    }
+  }
+
+  // A4 fixes: validate expected punctuation (soft matching)
+  function checkA4Fixes(){
+    const fix1 = (document.getElementById('a4_fix1').value || '').trim();
+    const fix2 = (document.getElementById('a4_fix2').value || '').trim();
+
+    // QID 1
+    let ok1 = false;
+    if(fix1){
+      const s = fix1.toLowerCase();
+      ok1 = s.includes('lápiz') && s.includes('cuaderno') && s.includes('colores') && s.includes('borrador') && s.includes(',');
+      // require ending period (optional but good)
+      if(ok1 && !s.includes('.')) ok1 = ok1; // keep ok
+    }
+    renderFixFeedback('fb-a4fix1', fix1, ok1, 'Ejemplo: Trae lápiz, cuaderno, colores, borrador.');
+
+    markA4('a4fix1', ok1);
+
+    // QID 2
+    let ok2 = false;
+    if(fix2){
+      const s = fix2.toLowerCase();
+      ok2 = s.includes('hoy') && s.includes('mañana') && s.includes('.') ;
+    }
+    renderFixFeedback('fb-a4fix2', fix2, ok2, 'Ejemplo: Hoy leímos un cuento. Mañana haremos resumen.');
+    markA4('a4fix2', ok2);
+  }
+
+  function renderFixFeedback(id, txt, ok, example){
+    const fb = document.getElementById(id);
+    if(!txt){
+      fb.className='feedback show bad';
+      fb.textContent='Escribe la versión corregida.';
+      return;
+    }
+    fb.className='feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok ? 'Correcto: ahora se entiende mejor.' : ('Revisa la puntuación. ' + example);
+  }
+
+  function markA4(qid, ok){
+    if(!APP.answered.a4.has(qid)){
+      APP.answered.a4.add(qid);
+      if(ok) APP.correct.a4 += 1;
+      APP.log.push({ act:'a4', qid, ok });
+    }
+  }
+
+  // ---------------------------
+  // Completion overlay
+  // ---------------------------
+  function showOverlay(){
+    const el = document.getElementById('overlay');
+    el.classList.add('show');
+    setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+  }
+  function hideOverlay(){
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ---------------------------
+  // Print results
+  // ---------------------------
+  function printResults(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    const now = new Date();
+    const fecha = now.toLocaleString('es-MX');
+
+    const report = (
+      '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+      '<title>Resultados ODA</title>'+
+      '<style>body{font-family:Arial,sans-serif;margin:24px;color:#111827}h1{margin:0 0 6px}.muted{color:#6b7280}.box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#f8fafc}.k{font-weight:700}</style>'+
+      '</head><body>'+
+      '<h1>Resultados de la ODA: Punto y coma (Textos discontinuos)</h1>'+
+      '<div class="muted">Fecha y hora: '+fecha+'</div>'+
+      '<div class="box">'+
+        '<div><span class="k">Tiempo:</span> '+fmtTime(APP.timer.elapsed)+'</div>'+
+        '<div><span class="k">Progreso:</span> '+prog+'%</div>'+
+        '<div><span class="k">Aciertos:</span> '+sc+'% ('+cor+'/'+total+')</div>'+
+      '</div>'+
+      '<div class="box"><div class="k">Nombre del alumno:</div><div style="height:28px;border-bottom:1px solid #e5e7eb;margin-top:8px"></div></div>'+
+      '<div class="box"><div class="k">Detalle (primer intento):</div>'+
+        '<table><thead><tr><th>Actividad</th><th>Reactivo</th><th>Resultado</th></tr></thead><tbody>'+
+          APP.log.slice(0,500).map(x =>
+            '<tr><td>'+String(x.act).toUpperCase()+'</td><td>'+x.qid+'</td><td>'+(x.ok?'Correcto':'Incorrecto')+'</td></tr>'
+          ).join('')+
+        '</tbody></table>'+
+        '<div class="muted" style="margin-top:8px;">Autor: El Ruso</div>'+
+      '</div>'+
+      '</body></html>'
+    );
+
+    const w = window.open('', '_blank');
+    if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+    w.document.open();
+    w.document.write(report);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  // ---------------------------
+  // Reset
+  // ---------------------------
+  function resetAll(){
+    hideOverlay();
+
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked = false);
+    document.querySelectorAll('.feedback').forEach(f=> { f.className='feedback'; f.textContent=''; });
+
+    ['a2_fill','a4_fix1','a4_fix2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    const a3 = document.getElementById('a3_text'); if(a3) a3.value='';
+
+    for(const k of ['a1','a2','a3','a4']){
+      APP.answered[k].clear();
+      APP.correct[k]=0;
+      APP.usedHint[k]=false;
+      const vb = document.getElementById('verify-'+k);
+      if(vb) vb.disabled = false;
+    }
+    APP.log = [];
+
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer = { start: Date.now(), elapsed: 0, handle: null, running: false };
+    startTimer();
+
+    updateHeader();
+    updateFinalSummary();
+    flashNote('ODA reiniciada.');
+    go('a1');
+  }
+
+  // Init
+  updateHeader();
+  updateFinalSummary();
+  startTimer();
+</script>
+
+</body>
+</html>

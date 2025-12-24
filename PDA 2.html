@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Textos discontinuos | ODA (PDA 2)</title>
+  <style>
+    :root{
+      /* Lenguaje (rojo) + estándar */
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --card:#ffffff;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --borde: rgba(254,202,202,.75);
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{margin:0; font-size: clamp(20px, 2.4vw, 30px); letter-spacing:.2px;}
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.88); max-width:980px; line-height:1.35}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1a0b0b;
+      color:#fff;
+      display:inline-block;
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+    .progressWrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+    .bar{
+      width: 240px; height: 12px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+      transition: width .35s ease;
+    }
+
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 16px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      margin:12px auto 14px;
+      backdrop-filter: blur(6px);
+      max-width:1100px;
+    }
+    .tab{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      padding:9px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-color: rgba(254,202,202,.85);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding:0 16px 0}
+    .card{
+      background:rgba(255,255,255,.93);
+      border:1px solid var(--borde);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom:1px solid var(--borde);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+    .card .bd{padding:16px}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none;
+      background:var(--accent); color:#fff;
+      padding:10px 14px; border-radius:12px;
+      cursor:pointer; font-weight:900;
+      box-shadow: 0 10px 18px rgba(185,28,28,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#1a0b0b; box-shadow: 0 8px 16px rgba(26,11,11,.18);}
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(59,10,10,.28);
+      color:var(--ink);
+      box-shadow:none;
+      font-weight:900;
+    }
+    button.muted{background:#8b5a5a; box-shadow:none; font-weight:900;}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .two{display:grid; grid-template-columns: 1.15fr .85fr; gap:14px;}
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+
+    .panel{
+      background:#fff;
+      border:1px solid var(--borde);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .small{font-size:13px; color:var(--muted); line-height:1.35}
+
+    .q{
+      margin:12px 0;
+      padding:12px;
+      border-radius:14px;
+      background:#fff7f7;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .q .qtitle{font-weight:900; margin-bottom:10px}
+
+    .bank{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      padding:12px;
+      border:1px dashed rgba(59,10,10,.25);
+      background:#fff7f7;
+      border-radius:14px;
+      margin-bottom:10px;
+    }
+    .item{
+      user-select:none;
+      cursor: grab;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.95);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+      font-size:13px;
+      line-height:1.2;
+      min-width: 220px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .item:active{ cursor: grabbing; }
+    .tag{
+      font-size:11px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.04);
+      padding:3px 8px;
+      border-radius:999px;
+      color:var(--muted);
+      white-space:nowrap;
+      font-weight:800;
+    }
+    .item.correct{
+      border-color: rgba(21,128,61,.45);
+      background: rgba(21,128,61,.06);
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size:13px;
+      border:1px solid rgba(254,202,202,.85);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+    }
+    th, td{
+      border-bottom:1px solid rgba(254,202,202,.7);
+      padding:10px 10px;
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      background:#fff1f1;
+      color:var(--muted);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.2px;
+      width: 170px;
+    }
+    tr:last-child td{border-bottom:none}
+
+    .slot{
+      min-height:46px;
+      border-radius:12px;
+      border:2px dashed rgba(185,28,28,.22);
+      background: rgba(239,68,68,.05);
+      padding:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(138,28,28,.90);
+      font-size:12px;
+      font-weight:900;
+    }
+    .slot.filled{
+      border-style:solid;
+      background: rgba(21,128,61,.06);
+      border-color: rgba(21,128,61,.35);
+      color:#166534;
+    }
+
+    .choices{
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    .choice{
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(0,0,0,.03);
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 13px;
+      user-select:none;
+    }
+    .choice.selected{
+      border-color: rgba(185,28,28,.40);
+      background: rgba(239,68,68,.10);
+      color: #7a0f0f;
+    }
+    .choice.correct{
+      border-color: rgba(21,128,61,.40);
+      background: rgba(21,128,61,.10);
+      color: #166534;
+    }
+    .choice.wrong{
+      border-color: rgba(185,28,28,.35);
+      background: rgba(239,68,68,.12);
+      color: #7a0f0f;
+    }
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      background:#fff;
+      display:none;
+      font-weight:900;
+      font-size:13px;
+      color:#1a0b0b;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(21,128,61,.55); background: rgba(21,128,61,.06)}
+    .feedback.bad{border-color: rgba(185,28,28,.55); background: rgba(185,28,28,.06)}
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-size:13px;
+      line-height:1.35;
+      font-weight:800;
+    }
+
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* completion overlay */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(26,11,11,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(254,202,202,.9);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+    .tagDone{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(21,128,61,.10);
+      border:1px solid rgba(21,128,61,.25);
+      color:#166534;
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Institutional marks (official) */
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+    .brand-left img{
+      width:95px;
+      height:auto;
+      border-radius:10px;
+      filter:none;
+      opacity:.35;
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:1;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+      text-shadow: 0 6px 10px rgba(0,0,0,.5);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>Textos discontinuos | ODA</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Reflexiona sobre la utilidad de los formatos para organizar actividades e información.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Actividades">
+  <button class="tab active" id="tab-a1" data-go="a1">Actividad 1</button>
+  <button class="tab" id="tab-a2" data-go="a2">Actividad 2</button>
+  <button class="tab" id="tab-final" data-go="final">Cierre</button>
+</div>
+
+<main>
+  <article class="card">
+    <div class="hd">
+      <div style="min-width:260px; flex:1;">
+        <h2 id="sectionTitle">Actividad 1. Desordenado vs. organizado</h2>
+        <div class="meta" id="sectionMeta">Organiza la información en una tabla y decide qué formato ayuda más.</div>
+      </div>
+
+      <div style="min-width:260px; flex:1;">
+        <div class="meta" style="margin:0 0 6px;"><b>Nombre del alumno:</b></div>
+        <input id="student" type="text" placeholder="Escribe tu nombre" style="width:100%; padding:10px 10px; border-radius:12px; border:1px solid rgba(254,202,202,.95); outline:none; font-weight:900; color:var(--ink);">
+      </div>
+
+      <div class="btnrow">
+        <button class="secondary" id="btnResetAll">Reiniciar ODA</button>
+        <button class="muted" id="btnPrint">Imprimir resultados</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <!-- A1 -->
+      <section class="page active" id="page-a1">
+        <div class="two">
+          <div class="panel">
+            <h3>Información revuelta (texto)</h3>
+            <p>Lee el texto. Después, organiza la información en la tabla.</p>
+
+            <div class="q">
+              <div class="qtitle">Texto revuelto</div>
+              <div class="small" id="messyText"></div>
+              <div class="note">Meta: que otra persona encuentre rápido la información.</div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">Tarjetas para arrastrar</div>
+              <div class="bank" id="bank1" aria-label="Banco de tarjetas"></div>
+
+              <table aria-label="Tabla para organizar información">
+                <thead>
+                  <tr>
+                    <th>Elemento</th>
+                    <th>Quién / Dónde</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+
+              <div class="q" style="margin-top:12px;">
+                <div class="qtitle">¿Qué formato te ayuda más a encontrar la información?</div>
+                <div class="choices" id="formatChoices"></div>
+                <div class="feedback" id="fb-a1"></div>
+              </div>
+
+              <div class="btnrow">
+                <button class="ghost" id="resetEx1">Reiniciar ejercicio</button>
+                <button id="checkEx1">Verificar</button>
+              </div>
+            </div>
+
+            <div class="btnrow">
+              <button id="showAnswersA1">Dame la respuesta</button>
+              <button class="ghost" data-go="a2">Siguiente</button>
+            </div>
+
+            <div class="note">Anti-trampa: si usas <b>Dame la respuesta</b>, la verificación se deshabilita hasta <b>Reiniciar ejercicio</b>.</div>
+          </div>
+
+          <div class="panel">
+            <h3>Reflexión rápida</h3>
+            <div class="small">
+              • Un <b>texto discontinuo</b> (como tabla, calendario u horario) muestra la información en partes, no en párrafos.<br>
+              • Te ayuda a responder rápido: <b>¿qué?</b> <b>¿quién?</b> <b>¿dónde?</b> <b>¿cuándo?</b><br>
+              • Si es fácil de leer, es más fácil de <b>explicar</b>.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- A2 -->
+      <section class="page" id="page-a2">
+        <div class="two">
+          <div class="panel">
+            <h3>Elegir el formato correcto</h3>
+            <p>Lee cada situación y elige el formato que más ayuda a organizar la información.</p>
+
+            <div id="scenarioArea" style="display:grid; gap:12px;"></div>
+
+            <div class="btnrow" style="justify-content:space-between;">
+              <div class="btnrow">
+                <button id="showAnswersA2" class="muted">Dame la respuesta</button>
+                <button class="ghost" id="printBtn">Imprimir resultados</button>
+              </div>
+              <div class="btnrow">
+                <button class="ghost" id="resetEx2">Reiniciar ejercicio</button>
+                <button id="checkEx2">Verificar</button>
+                <button id="finishBtn" disabled>Finalizar</button>
+              </div>
+            </div>
+
+            <div class="note">Anti-trampa: si usas <b>Dame la respuesta</b>, <b>Verificar</b> se deshabilita hasta <b>Reiniciar ejercicio</b>.</div>
+            <div class="feedback" id="fb-a2"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Cómo justificar tu elección</h3>
+            <div class="small">
+              Puedes decir: “Elegí <b>tabla</b> porque compara información.”<br>
+              “Elegí <b>calendario</b> porque organiza por fechas.”<br>
+              “Elegí <b>horario</b> porque organiza por horas.”<br>
+              “Elegí <b>lista</b> porque ordena elementos para no olvidar.”
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="page" id="page-final">
+        <div class="two">
+          <div class="panel">
+            <h3>Cierre</h3>
+            <p>Reflexiona (oral o en tu cuaderno):</p>
+            <div class="note">
+              1) ¿Qué cambió cuando organizaste la información en una tabla?<br>
+              2) ¿Qué formato usarías para explicar algo al grupo y por qué?<br>
+              3) ¿Cómo te ayuda un formato a no confundirte?
+            </div>
+
+            <div class="btnrow" style="margin-top:12px;">
+              <button class="muted" id="btnPrint2">Imprimir resultados</button>
+              <button class="ghost" data-go="a1">Volver al inicio</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Resumen</h3>
+            <div class="small">Aciertos: <b class="mono" id="correctLabel">0</b> / <b class="mono" id="totalLabel">0</b></div>
+            <div class="small">Tiempo total: <b class="mono" id="timeLabel2">00:00</b></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+</main>
+
+<!-- Completion overlay -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Completaste la ODA">
+  <div class="box">
+    <div class="tagDone">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o revisar las actividades.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" id="btnPrint3">Imprimir resultados</button>
+      <button class="secondary" id="btnCloseOverlay">Cerrar</button>
+      <button class="ghost" data-go="final">Ir al cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institutional marks -->
+<div class="brand-left"><img id="escudo" src="imagenes/escudo.png" alt="Escudo"></div>
+<div class="brand-right">
+  <img id="firma" src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+/* =========================
+   Estado general (Tipo A/B)
+========================= */
+const APP = {
+  active: 'a1',
+  timer: { start: null, elapsed: 0, handle: null, running: false, stopped:false },
+  attempts: 0,
+  showAnswerUsedA1: false,
+  showAnswerUsedA2: false,
+  progress100: false,
+  // logs for report
+  log: []
+};
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function fmtTime(s){
+  const mm = pad2(Math.floor(s/60));
+  const ss = pad2(s%60);
+  return mm+':'+ss;
+}
+function startTimer(){
+  if(APP.timer.running || APP.timer.stopped) return;
+  APP.timer.start = Date.now();
+  APP.timer.running = true;
+  APP.timer.handle = setInterval(()=>{
+    APP.timer.elapsed = Math.floor((Date.now()-APP.timer.start)/1000);
+    document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+    const t2 = document.getElementById('timeLabel2');
+    if(t2) t2.textContent = fmtTime(APP.timer.elapsed);
+  }, 250);
+}
+function stopTimer(){
+  if(APP.timer.handle) clearInterval(APP.timer.handle);
+  APP.timer.handle = null;
+  APP.timer.running = false;
+  APP.timer.stopped = true;
+}
+function shuffleArray(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
+function studentName(){
+  const v = (document.getElementById('student').value || '').trim();
+  return v ? v : '—';
+}
+
+/* =========================
+   Navegación (sin onclick)
+========================= */
+function go(where){
+  const pages = ['a1','a2','final'];
+  pages.forEach(p=>{
+    document.getElementById('page-'+p).classList.remove('active');
+    const tab = document.getElementById('tab-'+p);
+    if(tab) tab.classList.remove('active');
+  });
+  document.getElementById('page-'+where).classList.add('active');
+  const t = document.getElementById('tab-'+where);
+  if(t) t.classList.add('active');
+
+  APP.active = where;
+  startTimer();
+  hideOverlay();
+
+  const titleMap = {
+    a1: ['Actividad 1. Desordenado vs. organizado', 'Organiza la información en una tabla y decide qué formato ayuda más.'],
+    a2: ['Actividad 2. Elegir el formato correcto', 'Selecciona el formato más útil en cada situación.'],
+    final: ['Cierre', 'Reflexión final y resumen de avance.']
+  };
+  const pair = titleMap[where] || titleMap.a1;
+  document.getElementById('sectionTitle').textContent = pair[0];
+  document.getElementById('sectionMeta').textContent = pair[1];
+
+  updateHeader();
+  updateFinalSummary();
+}
+
+/* =========================
+   Actividad 1
+========================= */
+const ex1Rows = [
+  { key:"Comida",  slotId:"slot_food",  correct:"it_food" },
+  { key:"Bebida",  slotId:"slot_drink", correct:"it_drink" },
+  { key:"Lugar",   slotId:"slot_place", correct:"it_place" },
+  { key:"Hora",    slotId:"slot_time",  correct:"it_time" }
+];
+
+let ex1Items = [
+  { id:"it_food",  label:"🍪 Galletas", meta:"Esteban las trae" },
+  { id:"it_drink", label:"🧃 Jugo",     meta:"Marcelo lo trae" },
+  { id:"it_place", label:"🏫 Patio",    meta:"En la escuela" },
+  { id:"it_time",  label:"⏰ 10:30",    meta:"Durante el recreo" }
+];
+
+const formatOptionsBase = [
+  { id:"fmt_table", label:"Tabla" },
+  { id:"fmt_text",  label:"Texto" }
+];
+const formatCorrect = "fmt_table";
+let selectedFormat = null;
+
+function renderMessyText(){
+  const parts = [
+    "En el patio será el convivio.",
+    "Marcelo trae el jugo.",
+    "Es a las 10:30 en el recreo.",
+    "Esteban trae las galletas."
+  ];
+  shuffleArray(parts);
+  document.getElementById("messyText").textContent = parts.join(" ");
+}
+
+function makeItemNode(item){
+  const el = document.createElement("div");
+  el.className = "item";
+  el.id = item.id;
+  el.draggable = true;
+  el.innerHTML = `<span>${item.label}</span><span class="tag">${item.meta}</span>`;
+  el.addEventListener("dragstart", (ev) => {
+    startTimer();
+    ev.dataTransfer.setData("text/plain", item.id);
+  });
+  return el;
+}
+function getOrCreateItemNode(item){
+  const existing = document.getElementById(item.id);
+  return existing ? existing : makeItemNode(item);
+}
+
+function renderTable(){
+  const tb = document.getElementById("tableBody");
+  tb.innerHTML = "";
+  ex1Rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.textContent = r.key;
+
+    const td = document.createElement("td");
+    const dz = document.createElement("div");
+    dz.className = "slot";
+    dz.id = r.slotId;
+    dz.dataset.accept = r.correct;
+    dz.textContent = "Suelta aquí";
+    dz.addEventListener("dragover", ev => ev.preventDefault());
+    dz.addEventListener("drop", onDropEx1);
+
+    td.appendChild(dz);
+    tr.appendChild(th);
+    tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+}
+
+function renderBank1(){
+  const bank = document.getElementById("bank1");
+  bank.innerHTML = "";
+  const items = [...ex1Items];
+  shuffleArray(items);
+  items.forEach(it => bank.appendChild(getOrCreateItemNode(it)));
+}
+
+function renderFormatChoices(){
+  const wrap = document.getElementById("formatChoices");
+  wrap.innerHTML = "";
+  const opts = [...formatOptionsBase];
+  shuffleArray(opts);
+  opts.forEach(o => {
+    const b = document.createElement("div");
+    b.className = "choice";
+    b.textContent = o.label;
+    b.dataset.id = o.id;
+    b.addEventListener("click", () => {
+      startTimer();
+      selectedFormat = o.id;
+      wrap.querySelectorAll(".choice").forEach(x => x.classList.remove("selected"));
+      b.classList.add("selected");
+      recalcProgress();
+    });
+    wrap.appendChild(b);
+  });
+}
+
+function returnItemToBank(itemEl){
+  itemEl.classList.remove("correct");
+  document.getElementById("bank1").appendChild(itemEl);
+}
+function moveItemIntoSlot(itemEl, slotEl){
+  const existing = slotEl.querySelector(".item");
+  if(existing) returnItemToBank(existing);
+  slotEl.textContent = "";
+  slotEl.appendChild(itemEl);
+  slotEl.classList.add("filled");
+}
+function onDropEx1(ev){
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text/plain");
+  const itemEl = document.getElementById(id);
+  if(!itemEl || !id.startsWith("it_")) return;
+  moveItemIntoSlot(itemEl, ev.currentTarget);
+  recalcProgress();
+}
+
+function countEx1Correct(){
+  let c = 0;
+  ex1Rows.forEach(r => {
+    const slot = document.getElementById(r.slotId);
+    const placed = slot ? slot.querySelector(".item") : null;
+    if(placed && placed.id === r.correct) c++;
+  });
+  if(selectedFormat === formatCorrect) c++;
+  return c;
+}
+
+function checkEx1(){
+  if(APP.showAnswerUsedA1){
+    flashNote('Usaste "Dame la respuesta". Reinicia el ejercicio para volver a verificar.');
+    return;
+  }
+  APP.attempts++;
+
+  ex1Rows.forEach(r => {
+    const slot = document.getElementById(r.slotId);
+    const placed = slot ? slot.querySelector(".item") : null;
+    if(placed && placed.id === r.correct) placed.classList.add("correct");
+    else if(placed) placed.classList.remove("correct");
+  });
+
+  document.querySelectorAll("#formatChoices .choice").forEach(ch => {
+    const id = ch.dataset.id;
+    ch.classList.remove("correct","wrong");
+    if(selectedFormat){
+      if(id === selectedFormat && id === formatCorrect) ch.classList.add("correct");
+      if(id === selectedFormat && id !== formatCorrect) ch.classList.add("wrong");
+    }
+  });
+
+  const fb = document.getElementById('fb-a1');
+  const correct = countEx1Correct();
+  fb.className = 'feedback show ' + (correct === (ex1Rows.length+1) ? 'ok' : 'bad');
+  fb.textContent = (correct === (ex1Rows.length+1))
+    ? '¡Excelente! Tu tabla y tu elección de formato son correctas.'
+    : `Vas en ${correct} de ${ex1Rows.length+1}. Ajusta y vuelve a verificar.`;
+
+  recalcProgress();
+}
+
+function resetEx1(){
+  ex1Rows.forEach(r => {
+    const slot = document.getElementById(r.slotId);
+    if(slot){
+      slot.classList.remove("filled");
+      slot.textContent = "Suelta aquí";
+    }
+  });
+  selectedFormat = null;
+  APP.showAnswerUsedA1 = false;
+  document.getElementById("checkEx1").disabled = false;
+
+  renderMessyText();
+  renderFormatChoices();
+  renderBank1();
+  document.getElementById('fb-a1').className = 'feedback';
+  document.getElementById('fb-a1').textContent = '';
+
+  recalcProgress();
+}
+
+function showAnswersA1(){
+  if(APP.showAnswerUsedA1) return;
+  APP.showAnswerUsedA1 = true;
+
+  ex1Rows.forEach(r => {
+    const slot = document.getElementById(r.slotId);
+    const node = document.getElementById(r.correct);
+    if(slot && node) moveItemIntoSlot(node, slot);
+  });
+  selectedFormat = formatCorrect;
+  document.querySelectorAll("#formatChoices .choice").forEach(ch => {
+    ch.classList.remove("selected");
+    if(ch.dataset.id === formatCorrect) ch.classList.add("selected");
+  });
+
+  document.getElementById("checkEx1").disabled = true;
+  recalcProgress();
+}
+
+/* =========================
+   Actividad 2
+========================= */
+const formats = [
+  { id:"f_list", label:"Lista" },
+  { id:"f_calendar", label:"Calendario" },
+  { id:"f_schedule", label:"Horario" },
+  { id:"f_table", label:"Tabla" }
+];
+
+let scenarios = [
+  { id:"sc1", text:"Quiero anotar lo que necesito llevar mañana a la escuela.", correct:"f_list" },
+  { id:"sc2", text:"Quiero saber en qué día será el festival y la reunión.", correct:"f_calendar" },
+  { id:"sc3", text:"Quiero ordenar las actividades de la mañana por hora.", correct:"f_schedule" },
+  { id:"sc4", text:"Quiero comparar quién trae qué para el convivio.", correct:"f_table" }
+];
+
+const selections = new Map();
+
+function renderScenarios(){
+  const area = document.getElementById("scenarioArea");
+  area.innerHTML = "";
+  const sc = [...scenarios];
+  shuffleArray(sc);
+
+  sc.forEach((s, idx) => {
+    const box = document.createElement("div");
+    box.className = "q";
+    box.dataset.sc = s.id;
+
+    const title = document.createElement("div");
+    title.className = "qtitle";
+    title.textContent = `Situación ${idx+1}:`;
+
+    const p = document.createElement("div");
+    p.className = "small";
+    p.style.marginBottom = "10px";
+    p.textContent = s.text;
+
+    const choices = document.createElement("div");
+    choices.className = "choices";
+
+    const opts = [...formats];
+    shuffleArray(opts);
+    opts.forEach(o => {
+      const b = document.createElement("div");
+      b.className = "choice";
+      b.textContent = o.label;
+      b.dataset.format = o.id;
+
+      b.addEventListener("click", () => {
+        startTimer();
+        selections.set(s.id, o.id);
+        choices.querySelectorAll(".choice").forEach(x => x.classList.remove("selected"));
+        b.classList.add("selected");
+        recalcProgress();
+      });
+
+      choices.appendChild(b);
+    });
+
+    box.appendChild(title);
+    box.appendChild(p);
+    box.appendChild(choices);
+    area.appendChild(box);
+  });
+}
+
+function countEx2Correct(){
+  let c = 0;
+  scenarios.forEach(s => {
+    const sel = selections.get(s.id);
+    if(sel && sel === s.correct) c++;
+  });
+  return c;
+}
+
+function checkEx2(){
+  if(APP.showAnswerUsedA2){
+    flashNote('Usaste "Dame la respuesta". Reinicia el ejercicio para volver a verificar.');
+    return;
+  }
+  APP.attempts++;
+
+  document.querySelectorAll("#scenarioArea .q").forEach(q => {
+    const scId = q.dataset.sc;
+    const s = scenarios.find(x => x.id === scId);
+    const sel = selections.get(scId);
+
+    q.querySelectorAll(".choice").forEach(ch => {
+      ch.classList.remove("correct","wrong");
+      const fid = ch.dataset.format;
+      if(sel && fid === sel){
+        if(sel === s.correct) ch.classList.add("correct");
+        else ch.classList.add("wrong");
+      }
+    });
+  });
+
+  const fb = document.getElementById('fb-a2');
+  const correct = countEx2Correct();
+  fb.className = 'feedback show ' + (correct === scenarios.length ? 'ok' : 'bad');
+  fb.textContent = (correct === scenarios.length)
+    ? '¡Excelente! Elegiste el formato correcto en todas las situaciones.'
+    : `Llevas ${correct} de ${scenarios.length}. Revisa y vuelve a verificar.`;
+
+  recalcProgress();
+}
+
+function resetEx2(){
+  selections.clear();
+  APP.showAnswerUsedA2 = false;
+  document.getElementById("checkEx2").disabled = false;
+
+  renderScenarios();
+  document.getElementById('fb-a2').className = 'feedback';
+  document.getElementById('fb-a2').textContent = '';
+
+  recalcProgress();
+}
+
+function showAnswersA2(){
+  if(APP.showAnswerUsedA2) return;
+  APP.showAnswerUsedA2 = true;
+
+  scenarios.forEach(s => selections.set(s.id, s.correct));
+  document.querySelectorAll("#scenarioArea .q").forEach(q => {
+    const scId = q.dataset.sc;
+    const sel = selections.get(scId);
+    q.querySelectorAll(".choice").forEach(ch => {
+      ch.classList.remove("selected");
+      if(ch.dataset.format === sel) ch.classList.add("selected");
+    });
+  });
+
+  document.getElementById("checkEx2").disabled = true;
+  recalcProgress();
+}
+
+/* =========================
+   Progreso / overlay / impresión
+========================= */
+const totalTargets = ex1Rows.length + 1 + scenarios.length; // 4 slots + formato + 4 situaciones
+
+function correctTotal(){
+  return countEx1Correct() + countEx2Correct();
+}
+function percent(x, total){ return total<=0 ? 0 : Math.round((x/total)*100); }
+
+function updateHeader(){
+  const correct = correctTotal();
+  const pct = percent(correct, totalTargets);
+
+  document.getElementById('progLabel').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('scoreLabel').textContent = pct + '%';
+
+  document.getElementById('correctLabel').textContent = String(correct);
+  document.getElementById('totalLabel').textContent = String(totalTargets);
+
+  if(pct >= 100 && !APP.progress100){
+    APP.progress100 = true;
+    stopTimer();
+    showOverlay();
+  }
+  document.getElementById('finishBtn').disabled = pct !== 100;
+
+  return pct;
+}
+
+function updateFinalSummary(){
+  // already updated in updateHeader, keep hook if needed
+}
+
+function recalcProgress(){
+  updateHeader();
+}
+
+function showOverlay(){
+  const el = document.getElementById('overlay');
+  el.classList.add('show');
+  setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+}
+function hideOverlay(){
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function finish(){
+  const pct = updateHeader();
+  if(pct !== 100) return;
+  // Already stopped timer in updateHeader
+  showOverlay();
+  go('final');
+}
+
+function printResults(){
+  const name = studentName();
+  const time = fmtTime(APP.timer.elapsed);
+  const correct = correctTotal();
+  const pct = percent(correct, totalTargets);
+  const fecha = new Date().toLocaleString('es-MX');
+
+  const lines = [];
+  lines.push(["ODA · Textos discontinuos | PDA 2", ""]);
+  lines.push(["Nombre:", name]);
+  lines.push(["Fecha y hora:", fecha]);
+  lines.push(["Tiempo:", time]);
+  lines.push(["Aciertos:", pct + "% ("+correct+"/"+totalTargets+")"]);
+  lines.push(["Intentos:", String(APP.attempts)]);
+  lines.push(["", ""]);
+  lines.push(["Actividad 1 · Tabla del convivio", ""]);
+  ex1Rows.forEach(r => {
+    const slot = document.getElementById(r.slotId);
+    const placed = slot && slot.querySelector(".item") ? slot.querySelector(".item").querySelector("span").textContent : "—";
+    lines.push([r.key + ":", placed]);
+  });
+  const fmtLabel = selectedFormat ? (selectedFormat === "fmt_table" ? "Tabla" : "Texto") : "—";
+  lines.push(["Formato elegido:", fmtLabel]);
+  lines.push(["", ""]);
+  lines.push(["Actividad 2 · Formato correcto", ""]);
+  scenarios.forEach(s => {
+    const sel = selections.get(s.id) || "—";
+    const label = (formats.find(f=>f.id===sel)||{label:sel}).label;
+    lines.push([s.text, label]);
+  });
+  lines.push(["", ""]);
+  lines.push(["Autor:", "El Ruso"]);
+
+  const w = window.open("", "_blank");
+  if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+
+  const rows = lines.map(([k,v]) => `
+    <tr>
+      <td style="padding:6px 10px;border:1px solid #d8dde3;font-weight:${v===""?700:600};background:${v===""?"#f8fafc":"#fff"}">${k}</td>
+      <td style="padding:6px 10px;border:1px solid #d8dde3">${v}</td>
+    </tr>
+  `).join("");
+
+  w.document.write(`
+    <!doctype html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>Resultados ODA</title>
+      <style>
+        body{font-family:Arial, sans-serif; padding:20px; color:#111827;}
+        h1{margin:0 0 10px; font-size:18px;}
+        .meta{color:#6b7280; font-size:12px; margin-bottom:14px;}
+        table{border-collapse:collapse; width:100%; font-size:12px;}
+      </style>
+    </head>
+    <body>
+      <h1>Reporte de resultados</h1>
+      <div class="meta">Textos discontinuos | ODA · Autor: El Ruso</div>
+      <table>${rows}</table>
+      <script>window.onload=()=>window.print();<\/script>
+    </body>
+    </html>
+  `);
+  w.document.close();
+}
+
+function flashNote(text){
+  const el = document.createElement('div');
+  el.style.position='fixed';
+  el.style.left='50%';
+  el.style.top='18px';
+  el.style.transform='translateX(-50%)';
+  el.style.background='rgba(255,255,255,.94)';
+  el.style.border='1px solid rgba(254,202,202,.95)';
+  el.style.boxShadow='0 18px 40px rgba(0,0,0,.28)';
+  el.style.padding='10px 12px';
+  el.style.borderRadius='14px';
+  el.style.maxWidth='900px';
+  el.style.width='calc(100% - 28px)';
+  el.style.zIndex='99999';
+  el.style.color='#1a0b0b';
+  el.style.fontWeight='900';
+  el.style.fontSize='13px';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+  setTimeout(()=>{ el.remove(); }, 2600);
+}
+
+/* =========================
+   Reinicio total
+========================= */
+function resetAll(){
+  hideOverlay();
+
+  // Reset state
+  APP.attempts = 0;
+  APP.showAnswerUsedA1 = false;
+  APP.showAnswerUsedA2 = false;
+  APP.progress100 = false;
+
+  // Timer reset
+  if(APP.timer.handle) clearInterval(APP.timer.handle);
+  APP.timer = { start: null, elapsed: 0, handle: null, running: false, stopped:false };
+  document.getElementById('timeLabel').textContent = '00:00';
+  document.getElementById('timeLabel2').textContent = '00:00';
+
+  // Inputs
+  document.getElementById('student').value = '';
+
+  // Rebuild exercises
+  renderMessyText();
+  renderTable();
+  renderFormatChoices();
+  renderBank1();
+  resetEx1();
+
+  renderScenarios();
+  resetEx2();
+
+  // Buttons
+  document.getElementById("checkEx1").disabled = false;
+  document.getElementById("checkEx2").disabled = false;
+
+  // Header
+  updateHeader();
+
+  // Back to start
+  go('a1');
+  flashNote('ODA reiniciada.');
+}
+
+/* =========================
+   Wire / init
+========================= */
+function wire(){
+  // Tabs and nav
+  document.querySelectorAll('[data-go]').forEach(btn=>{
+    btn.addEventListener('click', ()=> go(btn.getAttribute('data-go')));
+  });
+
+  // Start timer on first interaction
+  document.body.addEventListener('pointerdown', startTimer, { once:true });
+
+  // A1 actions
+  document.getElementById('resetEx1').addEventListener('click', resetEx1);
+  document.getElementById('checkEx1').addEventListener('click', ()=>{ startTimer(); checkEx1(); });
+  document.getElementById('showAnswersA1').addEventListener('click', ()=>{ startTimer(); showAnswersA1(); });
+
+  // A2 actions
+  document.getElementById('resetEx2').addEventListener('click', resetEx2);
+  document.getElementById('checkEx2').addEventListener('click', ()=>{ startTimer(); checkEx2(); });
+  document.getElementById('showAnswersA2').addEventListener('click', ()=>{ startTimer(); showAnswersA2(); });
+  document.getElementById('finishBtn').addEventListener('click', finish);
+
+  // Global actions
+  document.getElementById('btnResetAll').addEventListener('click', resetAll);
+  document.getElementById('btnPrint').addEventListener('click', printResults);
+  document.getElementById('btnPrint2').addEventListener('click', printResults);
+  document.getElementById('btnPrint3').addEventListener('click', printResults);
+  document.getElementById('printBtn').addEventListener('click', printResults);
+
+  // Overlay close
+  document.getElementById('btnCloseOverlay').addEventListener('click', hideOverlay);
+  document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target && e.target.id === 'overlay') hideOverlay(); });
+
+  // Image error handlers (no inline onerror)
+  const esc = document.getElementById('escudo');
+  const fir = document.getElementById('firma');
+  if(esc) esc.addEventListener('error', ()=> esc.style.display='none');
+  if(fir) fir.addEventListener('error', ()=> fir.style.display='none');
+}
+
+function init(){
+  renderMessyText();
+  renderTable();
+  renderFormatChoices();
+  renderBank1();
+  renderScenarios();
+  updateHeader();
+  wire();
+}
+init();
+</script>
+
+</body>
+</html>

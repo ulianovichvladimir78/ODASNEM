@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Textos discontinuos | ODA (PDA 1 actualizado)</title>
+  <style>
+    :root{
+      /* Lenguaje (rojo) */
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --soft:#fee2e2;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+      --borde: rgba(254,202,202,.75);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{margin:0; font-size: clamp(20px, 2.4vw, 30px); letter-spacing:.2px;}
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.88); max-width:980px; line-height:1.35}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1a0b0b;
+      color:#fff;
+      display:inline-block;
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+    .progressWrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+    .bar{
+      width: 240px; height: 12px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+    }
+
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 16px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      margin:12px auto 14px;
+      backdrop-filter: blur(6px);
+      max-width:1100px;
+    }
+    .tab{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      padding:9px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-color: rgba(254,202,202,.85);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding:0 16px 0}
+    .card{
+      background:rgba(255,255,255,.93);
+      border:1px solid var(--borde);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom:1px solid var(--borde);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+    .card .bd{padding:16px}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none;
+      background:var(--accent); color:#fff;
+      padding:10px 14px; border-radius:12px;
+      cursor:pointer; font-weight:900;
+      box-shadow: 0 10px 18px rgba(185,28,28,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#1a0b0b; box-shadow: 0 8px 16px rgba(26,11,11,.18);}
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(59,10,10,.28);
+      color:var(--ink);
+      box-shadow:none;
+      font-weight:900;
+    }
+    button.muted{background:#8b5a5a; box-shadow:none; font-weight:900;}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .two{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px;}
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+
+    .panel{
+      background:#fff;
+      border:1px solid var(--borde);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .small{font-size:13px; color:var(--muted); line-height:1.35}
+
+    /* Drag items */
+    .bank{
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:12px;
+      border:1px dashed rgba(59,10,10,.25);
+      background:#fff7f7;
+      border-radius:14px;
+    }
+    .item{
+      user-select:none;
+      cursor:grab;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.95);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      line-height:1.2;
+      min-width: 230px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+    }
+    .item:active{cursor:grabbing}
+    .tag{
+      font-size:11px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.04);
+      padding:3px 8px;
+      border-radius:999px;
+      color:var(--muted);
+      white-space:nowrap;
+      font-weight:800;
+    }
+    .item.correct{
+      border-color: rgba(21,128,61,.45);
+      background: rgba(21,128,61,.06);
+    }
+
+    /* Calendar */
+    .calendarWrap{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .calendarWrap{grid-template-columns:1fr} }
+
+    .cal{
+      border:1px solid rgba(254,202,202,.95);
+      border-radius:16px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .calTop{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(185,28,28,.06));
+      border-bottom:1px solid rgba(254,202,202,.85);
+    }
+    .calTop strong{font-size:14px}
+    .calGrid{display:grid; grid-template-columns: repeat(7, 1fr);}
+    .dow{
+      padding:8px 6px;
+      font-size:12px;
+      text-align:center;
+      color:var(--muted);
+      background:#fff1f1;
+      border-bottom:1px solid rgba(254,202,202,.85);
+      font-weight:900;
+    }
+    .day{
+      min-height:78px;
+      border-right:1px solid rgba(254,202,202,.7);
+      border-bottom:1px solid rgba(254,202,202,.7);
+      padding:8px;
+      position:relative;
+      background:#fff;
+    }
+    .day:nth-child(7n){border-right:0}
+    .num{
+      position:absolute; top:6px; right:8px;
+      font-size:12px; color:var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-weight:800;
+    }
+    .dropzone{
+      margin-top:22px;
+      min-height:46px;
+      border-radius:12px;
+      border:2px dashed rgba(185,28,28,.22);
+      background: rgba(239,68,68,.05);
+      padding:6px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      color: rgba(138,28,28,.90);
+      font-size:12px;
+      font-weight:900;
+    }
+    .dropzone.filled{
+      border-style:solid;
+      background: rgba(21,128,61,.06);
+      border-color: rgba(21,128,61,.35);
+      color: #166534;
+    }
+
+    /* Schedule */
+    .sched{
+      border:1px solid rgba(254,202,202,.95);
+      border-radius:16px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .sched table{ width:100%; border-collapse:collapse; font-size:13px; }
+    .sched th, .sched td{
+      border-bottom:1px solid rgba(254,202,202,.7);
+      padding:10px 10px;
+      vertical-align:top;
+    }
+    .sched th{
+      background:#fff1f1;
+      color:var(--muted);
+      font-weight:900;
+      width:160px;
+      font-size:12px;
+      letter-spacing:.2px;
+      text-align:left;
+    }
+    .slot{
+      min-height:46px;
+      border-radius:12px;
+      border:2px dashed rgba(185,28,28,.22);
+      background: rgba(239,68,68,.05);
+      padding:8px;
+      display:flex; align-items:center; justify-content:center;
+      color: rgba(138,28,28,.90);
+      font-size:12px;
+      font-weight:900;
+    }
+    .slot.filled{
+      border-style:solid;
+      background: rgba(21,128,61,.06);
+      border-color: rgba(21,128,61,.35);
+      color:#166534;
+    }
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      color:#1a0b0b;
+      background:#fff;
+      display:none;
+      font-weight:900;
+      font-size:13px;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(21,128,61,.55); background: rgba(21,128,61,.06)}
+    .feedback.bad{border-color: rgba(185,28,28,.55); background: rgba(185,28,28,.06)}
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-size:13px;
+      line-height:1.35;
+      font-weight:800;
+    }
+
+    input[type="text"]{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(254,202,202,.95);
+      background:#fff;
+      color:var(--ink);
+      font-weight:900;
+      outline:none;
+    }
+
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* completion overlay */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(26,11,11,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(254,202,202,.9);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+    .tagOk{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(21,128,61,.10);
+      border:1px solid rgba(21,128,61,.25);
+      color:#166534;
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Institutional marks (official) */
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+    .brand-left img{
+      width:95px;
+      height:auto;
+      border-radius:10px;
+      filter:none;
+      opacity:.35;
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:1;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+      text-shadow: 0 6px 10px rgba(0,0,0,.5);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>Textos discontinuos | ODA</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Identifica características y funciones de los textos discontinuos para programar y calendarizar actividades.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Actividades">
+  <button class="tab active" id="tab-a1" data-go="a1">Actividad 1</button>
+  <button class="tab" id="tab-a2" data-go="a2">Actividad 2</button>
+  <button class="tab" id="tab-final" data-go="final">Cierre</button>
+</div>
+
+<main>
+  <article class="card">
+    <div class="hd">
+      <div style="min-width:260px; flex:1;">
+        <h2 id="sectionTitle">Actividad 1. Calendario de actividades</h2>
+        <div class="meta" id="sectionMeta">Arrastra cada actividad al día correcto del calendario.</div>
+      </div>
+      <div style="min-width:260px; flex:1;">
+        <div class="meta" style="margin:0 0 6px;"><b>Nombre del alumno:</b></div>
+        <input id="student" type="text" placeholder="Escribe tu nombre">
+      </div>
+      <div class="btnrow">
+        <button class="secondary" id="btnResetAll">Reiniciar ODA</button>
+        <button class="muted" id="btnPrint">Imprimir resultados</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <!-- ACT 1 -->
+      <section class="page active" id="page-a1">
+        <div class="two">
+          <div class="panel">
+            <h3>Calendario (Marzo)</h3>
+            <p>Arrastra las tarjetas al día correcto.</p>
+
+            <div class="calendarWrap">
+              <div>
+                <div class="cal" aria-label="Calendario">
+                  <div class="calTop">
+                    <strong>Marzo</strong>
+                    <span class="small">Organiza por fecha</span>
+                  </div>
+                  <div class="calGrid" id="calendarGrid"></div>
+                </div>
+
+                <div class="btnrow" style="margin-top:12px;">
+                  <button class="ghost" id="resetEx1">Reiniciar ejercicio</button>
+                  <button id="checkEx1">Verificar</button>
+                </div>
+
+                <div class="feedback" id="fb-ex1"></div>
+              </div>
+
+              <div>
+                <div style="font-weight:900; margin:0 0 8px;">Actividades</div>
+                <div class="bank" id="bank1" aria-label="Banco de actividades (calendario)"></div>
+                <div class="note">Consejo: primero lee la <b>fecha</b> y luego elige el <b>día</b> en el calendario.</div>
+              </div>
+            </div>
+
+            <div class="btnrow" style="margin-top:12px;">
+              <button id="showAnswers">Dame la respuesta</button>
+              <button class="ghost" data-go="a2">Siguiente</button>
+            </div>
+
+            <div class="note">
+              Regla anti-trampa: si usas <b>Dame la respuesta</b>, <b>Verificar</b> se deshabilita hasta reiniciar el ejercicio.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>¿Qué estás aprendiendo?</h3>
+            <div class="small">
+              • Un <b>calendario</b> organiza actividades por <b>fecha</b>.<br>
+              • Te ayuda a responder: <b>¿cuándo ocurre?</b><br>
+              • Es un <b>texto discontinuo</b> porque la información está en cuadros.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 2 -->
+      <section class="page" id="page-a2">
+        <div class="two">
+          <div class="panel">
+            <h3>Horario escolar (un día)</h3>
+            <p>Arrastra cada actividad al horario correcto.</p>
+
+            <div class="calendarWrap">
+              <div>
+                <div class="sched" aria-label="Horario del día">
+                  <div class="calTop">
+                    <strong>Horario escolar</strong>
+                    <span class="small">Organiza por hora</span>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr><th>Hora</th><th>Actividad</th></tr>
+                    </thead>
+                    <tbody id="scheduleBody"></tbody>
+                  </table>
+                </div>
+
+                <div class="btnrow" style="margin-top:12px;">
+                  <button class="ghost" id="resetEx2">Reiniciar ejercicio</button>
+                  <button id="checkEx2">Verificar</button>
+                </div>
+
+                <div class="feedback" id="fb-ex2"></div>
+              </div>
+
+              <div>
+                <div style="font-weight:900; margin:0 0 8px;">Actividades</div>
+                <div class="bank" id="bank2" aria-label="Banco de actividades (horario)"></div>
+                <div class="note">Consejo: el horario indica <b>cuándo</b> ocurre cada actividad.</div>
+              </div>
+            </div>
+
+            <div class="btnrow" style="margin-top:12px;">
+              <button class="ghost" data-go="a1">Volver</button>
+              <button class="ghost" data-go="final">Ir al cierre</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Mini-reto para exponer</h3>
+            <div class="small">
+              Practica decir:<br>
+              “Este horario es un texto discontinuo; organiza actividades por hora y se lee rápido.”
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="page" id="page-final">
+        <div class="two">
+          <div class="panel">
+            <h3>Cierre</h3>
+            <p>Responde en tu cuaderno o de forma oral:</p>
+            <div class="note">
+              1) ¿Qué diferencia hay entre <b>calendario</b> y <b>horario</b>?<br>
+              2) ¿Cómo te ayuda un texto discontinuo a no olvidar actividades?<br>
+              3) ¿Qué dirías para explicar tu calendario al grupo?
+            </div>
+
+            <div class="btnrow" style="margin-top:12px;">
+              <button class="muted" id="btnPrint2">Imprimir resultados</button>
+              <button class="ghost" data-go="a1">Volver al inicio</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Resumen</h3>
+            <div class="small">Reactivos correctos: <b class="mono" id="correctLabel">0</b> / <b class="mono" id="totalLabel">0</b></div>
+            <div class="small">Tiempo total: <b class="mono" id="timeLabel2">00:00</b></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </article>
+</main>
+
+<!-- Completion overlay -->
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="tagOk">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o revisar las actividades.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" id="btnPrint3">Imprimir resultados</button>
+      <button class="secondary" id="btnCloseOverlay">Cerrar</button>
+      <button class="ghost" data-go="final">Ir al cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institutional marks -->
+<div class="brand-left"><img src="imagenes/escudo.png" alt="Escudo"></div>
+<div class="brand-right">
+  <img src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+/* =========================
+   Configuración (PDA 1)
+========================= */
+const monthConfig = {
+  monthName: "Marzo",
+  daysInMonth: 31,
+  startDow: 6 // 1 de marzo cae en sábado (ejemplo)
+};
+const DOW = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+
+const ex1Items = [
+  { id:"ex1_a", label:"📚 Examen de Español", meta:"5 de marzo", targetDay: 5 },
+  { id:"ex1_b", label:"🎉 Festival de Primavera", meta:"21 de marzo", targetDay: 21 },
+  { id:"ex1_c", label:"👨‍👩‍👧 Reunión con mamás y papás", meta:"12 de marzo", targetDay: 12 },
+  { id:"ex1_d", label:"🏫 Suspensión de clases", meta:"18 de marzo", targetDay: 18 }
+];
+
+const ex2Slots = [
+  { time:"8:00 – 9:00", id:"slot_1", correct:"ex2_a" },
+  { time:"9:00 – 10:00", id:"slot_2", correct:"ex2_b" },
+  { time:"10:00 – 10:30", id:"slot_3", correct:"ex2_c" },
+  { time:"10:30 – 11:30", id:"slot_4", correct:"ex2_d" }
+];
+const ex2Items = [
+  { id:"ex2_a", label:"📖 Clase de Español", meta:"8:00–9:00" },
+  { id:"ex2_b", label:"🧮 Clase de Matemáticas", meta:"9:00–10:00" },
+  { id:"ex2_c", label:"🍎 Receso", meta:"10:00–10:30" },
+  { id:"ex2_d", label:"🎨 Clase de Artes", meta:"10:30–11:30" }
+];
+
+const TOTAL = ex1Items.length + ex2Slots.length;
+
+/* =========================
+   Estado (Tipo A)
+========================= */
+const APP = {
+  active: 'a1',
+  timer: { start: null, elapsed: 0, handle: null, running: false, stopped: false },
+  attempts: 0,
+  showAnswerUsed: false,
+  progress100: false
+};
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function fmtTime(s){
+  const mm = pad2(Math.floor(s/60));
+  const ss = pad2(s%60);
+  return mm+':'+ss;
+}
+function startTimer(){
+  if(APP.timer.running || APP.timer.stopped) return;
+  APP.timer.start = Date.now();
+  APP.timer.running = true;
+  APP.timer.handle = setInterval(()=>{
+    APP.timer.elapsed = Math.floor((Date.now()-APP.timer.start)/1000);
+    document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+    const t2 = document.getElementById('timeLabel2');
+    if(t2) t2.textContent = fmtTime(APP.timer.elapsed);
+  }, 250);
+}
+function stopTimer(){
+  if(APP.timer.handle) clearInterval(APP.timer.handle);
+  APP.timer.handle = null;
+  APP.timer.running = false;
+  APP.timer.stopped = true;
+}
+
+function shuffleArray(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
+
+function setHeader(correct){
+  const pct = Math.round((correct/TOTAL)*100);
+  document.getElementById('scoreLabel').textContent = pct + '%';
+  document.getElementById('progLabel').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('correctLabel').textContent = String(correct);
+  document.getElementById('totalLabel').textContent = String(TOTAL);
+
+  if(pct >= 100 && !APP.progress100){
+    APP.progress100 = true;
+    stopTimer();
+    showOverlay();
+  }
+  return pct;
+}
+
+/* =========================
+   Navegación (sin onclick)
+========================= */
+function go(where){
+  const pages = ['a1','a2','final'];
+  pages.forEach(p=>{
+    document.getElementById('page-'+p).classList.remove('active');
+    const tab = document.getElementById('tab-'+p);
+    if(tab) tab.classList.remove('active');
+  });
+  document.getElementById('page-'+where).classList.add('active');
+  const t = document.getElementById('tab-'+where);
+  if(t) t.classList.add('active');
+  APP.active = where;
+
+  const titleMap = {
+    a1: ['Actividad 1. Calendario de actividades', 'Arrastra cada actividad al día correcto del calendario.'],
+    a2: ['Actividad 2. Programación de un día', 'Arrastra cada actividad al horario correcto del día.'],
+    final: ['Cierre', 'Reflexión final y resumen de avance.']
+  };
+  const pair = titleMap[where] || titleMap.a1;
+  document.getElementById('sectionTitle').textContent = pair[0];
+  document.getElementById('sectionMeta').textContent = pair[1];
+
+  startTimer();
+  hideOverlay();
+}
+
+/* =========================
+   Render
+========================= */
+function renderCalendar(){
+  const grid = document.getElementById("calendarGrid");
+  grid.innerHTML = "";
+
+  for(const d of DOW){
+    const el = document.createElement("div");
+    el.className = "dow";
+    el.textContent = d;
+    grid.appendChild(el);
+  }
+
+  for(let i=0;i<monthConfig.startDow;i++){
+    const empty = document.createElement("div");
+    empty.className = "day";
+    empty.style.background = "#fff7f7";
+    empty.style.opacity = ".55";
+    grid.appendChild(empty);
+  }
+
+  for(let day=1; day<=monthConfig.daysInMonth; day++){
+    const cell = document.createElement("div");
+    cell.className = "day";
+    cell.dataset.day = String(day);
+
+    const n = document.createElement("div");
+    n.className = "num";
+    n.textContent = day;
+    cell.appendChild(n);
+
+    const hasTarget = ex1Items.some(it => it.targetDay === day);
+    if(hasTarget){
+      const dz = document.createElement("div");
+      dz.className = "dropzone";
+      dz.textContent = "Suelta aquí";
+      dz.dataset.acceptDay = String(day);
+
+      dz.addEventListener("dragover", (ev) => ev.preventDefault());
+      dz.addEventListener("drop", onDropToCalendar);
+      cell.appendChild(dz);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function makeItemNode(item){
+  const el = document.createElement("div");
+  el.className = "item";
+  el.draggable = true;
+  el.id = item.id;
+  el.innerHTML = `<span>${item.label}</span><span class="tag">${item.meta || ""}</span>`;
+  el.addEventListener("dragstart", (ev) => {
+    startTimer();
+    ev.dataTransfer.setData("text/plain", item.id);
+  });
+  return el;
+}
+
+function getOrCreateItemNode(item){
+  const existing = document.getElementById(item.id);
+  return existing ? existing : makeItemNode(item);
+}
+
+function renderBanks(){
+  const bank1 = document.getElementById("bank1");
+  const bank2 = document.getElementById("bank2");
+
+  shuffleArray(ex1Items);
+  shuffleArray(ex2Items);
+
+  bank1.innerHTML = "";
+  bank2.innerHTML = "";
+
+  ex1Items.forEach(it => bank1.appendChild(getOrCreateItemNode(it)));
+  ex2Items.forEach(it => bank2.appendChild(getOrCreateItemNode(it)));
+}
+
+function renderSchedule(){
+  const tb = document.getElementById("scheduleBody");
+  tb.innerHTML = "";
+  ex2Slots.forEach(slot => {
+    const tr = document.createElement("tr");
+
+    const th = document.createElement("th");
+    th.textContent = slot.time;
+
+    const td = document.createElement("td");
+    const dz = document.createElement("div");
+    dz.className = "slot";
+    dz.id = slot.id;
+    dz.dataset.acceptId = slot.correct;
+    dz.textContent = "Suelta aquí";
+    dz.addEventListener("dragover", (ev) => ev.preventDefault());
+    dz.addEventListener("drop", onDropToSlot);
+
+    td.appendChild(dz);
+    tr.appendChild(th);
+    tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+}
+
+/* =========================
+   Drag & Drop
+========================= */
+function moveItemIntoZone(itemEl, zoneEl){
+  const existing = zoneEl.querySelector(".item");
+  if(existing){ returnItemToBank(existing); }
+  zoneEl.textContent = "";
+  zoneEl.appendChild(itemEl);
+  zoneEl.classList.add("filled");
+}
+function returnItemToBank(itemEl){
+  const bank = itemEl.id.startsWith("ex1_") ? document.getElementById("bank1") : document.getElementById("bank2");
+  itemEl.classList.remove("correct");
+  bank.appendChild(itemEl);
+}
+function onDropToCalendar(ev){
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text/plain");
+  const itemEl = document.getElementById(id);
+  if(!itemEl) return;
+  moveItemIntoZone(itemEl, ev.currentTarget);
+  recalcProgress();
+}
+function onDropToSlot(ev){
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text/plain");
+  const itemEl = document.getElementById(id);
+  if(!itemEl) return;
+  moveItemIntoZone(itemEl, ev.currentTarget);
+  recalcProgress();
+}
+
+/* =========================
+   Correctitud / progreso
+========================= */
+function countCalendarCorrect(){
+  let c = 0;
+  for(const it of ex1Items){
+    const dz = document.querySelector(`.dropzone[data-accept-day="${it.targetDay}"]`);
+    const placed = dz ? dz.querySelector(".item") : null;
+    if(placed && placed.id === it.id) c++;
+  }
+  return c;
+}
+function countScheduleCorrect(){
+  let c = 0;
+  for(const s of ex2Slots){
+    const dz = document.getElementById(s.id);
+    const placed = dz ? dz.querySelector(".item") : null;
+    if(placed && placed.id === s.correct) c++;
+  }
+  return c;
+}
+function recalcProgress(){
+  const correct = countCalendarCorrect() + countScheduleCorrect();
+  setHeader(correct);
+}
+function verifyExercise(which){
+  if(APP.showAnswerUsed){
+    flashNote('Usaste "Dame la respuesta". Reinicia el ejercicio para volver a verificar.');
+    return;
+  }
+  APP.attempts += 1;
+
+  let correct = 0;
+
+  // ex1
+  for(const it of ex1Items){
+    const dz = document.querySelector(`.dropzone[data-accept-day="${it.targetDay}"]`);
+    const placed = dz ? dz.querySelector(".item") : null;
+    if(placed && placed.id === it.id){
+      placed.classList.add("correct");
+    } else {
+      if(placed) placed.classList.remove("correct");
+    }
+  }
+
+  // ex2
+  for(const s of ex2Slots){
+    const dz = document.getElementById(s.id);
+    const placed = dz ? dz.querySelector(".item") : null;
+    if(placed && placed.id === s.correct){
+      placed.classList.add("correct");
+    } else {
+      if(placed) placed.classList.remove("correct");
+    }
+  }
+
+  correct = countCalendarCorrect() + countScheduleCorrect();
+  const pct = setHeader(correct);
+
+  const fb = document.getElementById(which === 'ex1' ? 'fb-ex1' : 'fb-ex2');
+  if(fb){
+    fb.className = 'feedback show ' + (pct === 100 ? 'ok' : (correct>0 ? 'bad' : 'bad'));
+    fb.textContent = (pct === 100)
+      ? '¡Excelente! Ya está todo correcto.'
+      : `Llevas ${correct} de ${TOTAL} correctos. Ajusta y vuelve a verificar.`;
+  }
+}
+
+function showAnswers(){
+  if(APP.showAnswerUsed) return;
+  APP.showAnswerUsed = true;
+
+  // Fill correct
+  ex1Items.forEach(it => {
+    const dz = document.querySelector(`.dropzone[data-accept-day="${it.targetDay}"]`);
+    const itemEl = document.getElementById(it.id);
+    if(dz && itemEl) moveItemIntoZone(itemEl, dz);
+  });
+  ex2Slots.forEach(s => {
+    const dz = document.getElementById(s.id);
+    const itemEl = document.getElementById(s.correct);
+    if(dz && itemEl) moveItemIntoZone(itemEl, dz);
+  });
+
+  // Disable verifies (anti-trampa)
+  const c1 = document.getElementById('checkEx1');
+  const c2 = document.getElementById('checkEx2');
+  if(c1) c1.disabled = true;
+  if(c2) c2.disabled = true;
+
+  recalcProgress();
+}
+
+function resetExercise(which){
+  // clear dropzones
+  document.querySelectorAll(".dropzone").forEach(dz => {
+    dz.classList.remove("filled");
+    dz.textContent = "Suelta aquí";
+  });
+  // clear slots
+  ex2Slots.forEach(s => {
+    const dz = document.getElementById(s.id);
+    if(dz){
+      dz.classList.remove("filled");
+      dz.textContent = "Suelta aquí";
+    }
+  });
+
+  APP.showAnswerUsed = false;
+  const c1 = document.getElementById('checkEx1');
+  const c2 = document.getElementById('checkEx2');
+  if(c1) c1.disabled = false;
+  if(c2) c2.disabled = false;
+
+  renderBanks();
+  recalcProgress();
+
+  const fb = document.getElementById(which === 'ex1' ? 'fb-ex1' : 'fb-ex2');
+  if(fb){ fb.className='feedback'; fb.textContent=''; }
+}
+
+/* =========================
+   Overlay
+========================= */
+function showOverlay(){
+  const el = document.getElementById('overlay');
+  el.classList.add('show');
+  setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+}
+function hideOverlay(){
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* =========================
+   Reporte / impresión
+========================= */
+function studentName(){
+  const v = (document.getElementById('student').value || '').trim();
+  return v ? v : '—';
+}
+
+function printResults(){
+  const name = studentName();
+  const time = fmtTime(APP.timer.elapsed);
+  const correct = countCalendarCorrect() + countScheduleCorrect();
+  const pct = Math.round((correct/TOTAL)*100);
+  const fecha = new Date().toLocaleString('es-MX');
+
+  const lines = [];
+  lines.push(["ODA · Textos discontinuos | PDA 1", ""]);
+  lines.push(["Nombre:", name]);
+  lines.push(["Fecha y hora:", fecha]);
+  lines.push(["Tiempo:", time]);
+  lines.push(["Aciertos:", pct + "% ("+correct+"/"+TOTAL+")"]);
+  lines.push(["Intentos:", String(APP.attempts)]);
+  lines.push(["", ""]);
+  lines.push(["Actividad 1 · Calendario", ""]);
+  ex1Items.forEach(it => {
+    const dz = document.querySelector(`.dropzone[data-accept-day="${it.targetDay}"]`);
+    const placed = dz && dz.querySelector(".item") ? dz.querySelector(".item").querySelector("span").textContent : "—";
+    lines.push([`Día ${it.targetDay}:`, placed]);
+  });
+  lines.push(["", ""]);
+  lines.push(["Actividad 2 · Horario", ""]);
+  ex2Slots.forEach(s => {
+    const dz = document.getElementById(s.id);
+    const placed = dz && dz.querySelector(".item") ? dz.querySelector(".item").querySelector("span").textContent : "—";
+    lines.push([s.time + ":", placed]);
+  });
+
+  const w = window.open("", "_blank");
+  if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+
+  const rows = lines.map(([k,v]) => `
+    <tr>
+      <td style="padding:6px 10px;border:1px solid #d8dde3;font-weight:${v===""?700:600};background:${v===""?"#f8fafc":"#fff"}">${k}</td>
+      <td style="padding:6px 10px;border:1px solid #d8dde3">${v}</td>
+    </tr>
+  `).join("");
+
+  w.document.write(`
+    <!doctype html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>Resultados ODA</title>
+      <style>
+        body{font-family:Arial, sans-serif; padding:20px; color:#111827;}
+        h1{margin:0 0 10px; font-size:18px;}
+        .meta{color:#6b7280; font-size:12px; margin-bottom:14px;}
+        table{border-collapse:collapse; width:100%; font-size:12px;}
+      </style>
+    </head>
+    <body>
+      <h1>Reporte de resultados</h1>
+      <div class="meta">Textos discontinuos | ODA · Autor: El Ruso</div>
+      <table>${rows}</table>
+      <script>window.onload=()=>window.print();<\/script>
+    </body>
+    </html>
+  `);
+  w.document.close();
+}
+
+/* =========================
+   UI helpers
+========================= */
+function flashNote(text){
+  const el = document.createElement('div');
+  el.style.position='fixed';
+  el.style.left='50%';
+  el.style.top='18px';
+  el.style.transform='translateX(-50%)';
+  el.style.background='rgba(255,255,255,.94)';
+  el.style.border='1px solid rgba(254,202,202,.95)';
+  el.style.boxShadow='0 18px 40px rgba(0,0,0,.28)';
+  el.style.padding='10px 12px';
+  el.style.borderRadius='14px';
+  el.style.maxWidth='900px';
+  el.style.width='calc(100% - 28px)';
+  el.style.zIndex='99999';
+  el.style.color='#1a0b0b';
+  el.style.fontWeight='900';
+  el.style.fontSize='13px';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+  setTimeout(()=>{ el.remove(); }, 2600);
+}
+
+/* =========================
+   Wire / init
+========================= */
+function wire(){
+  // Tabs and buttons with data-go
+  document.querySelectorAll('[data-go]').forEach(btn=>{
+    btn.addEventListener('click', ()=> go(btn.getAttribute('data-go')));
+  });
+
+  document.getElementById('btnResetAll').addEventListener('click', resetAll);
+  document.getElementById('btnPrint').addEventListener('click', printResults);
+  document.getElementById('btnPrint2').addEventListener('click', printResults);
+  document.getElementById('btnPrint3').addEventListener('click', printResults);
+  document.getElementById('btnCloseOverlay').addEventListener('click', hideOverlay);
+
+  document.getElementById('resetEx1').addEventListener('click', ()=> resetExercise('ex1'));
+  document.getElementById('resetEx2').addEventListener('click', ()=> resetExercise('ex2'));
+  document.getElementById('checkEx1').addEventListener('click', ()=> verifyExercise('ex1'));
+  document.getElementById('checkEx2').addEventListener('click', ()=> verifyExercise('ex2'));
+  document.getElementById('showAnswers').addEventListener('click', showAnswers);
+
+  // Start timer on first interaction
+  document.body.addEventListener('pointerdown', startTimer, { once:true });
+
+  // Close overlay when clicking background
+  document.getElementById('overlay').addEventListener('click', (e)=>{
+    if(e.target && e.target.id === 'overlay') hideOverlay();
+  });
+}
+
+function resetAll(){
+  hideOverlay();
+
+  // reset exercises and state
+  APP.attempts = 0;
+  APP.showAnswerUsed = false;
+  APP.progress100 = false;
+
+  // reset timer
+  if(APP.timer.handle) clearInterval(APP.timer.handle);
+  APP.timer = { start: null, elapsed: 0, handle: null, running: false, stopped: false };
+  document.getElementById('timeLabel').textContent = '00:00';
+  document.getElementById('timeLabel2').textContent = '00:00';
+
+  // reset input and UI
+  document.getElementById('student').value = '';
+
+  // re-render and clean
+  renderCalendar();
+  renderSchedule();
+  renderBanks();
+  resetExercise('ex1'); // also re-enables verify
+
+  // hard clear feedback
+  const f1 = document.getElementById('fb-ex1'); if(f1){ f1.className='feedback'; f1.textContent=''; }
+  const f2 = document.getElementById('fb-ex2'); if(f2){ f2.className='feedback'; f2.textContent=''; }
+
+  // header
+  setHeader(0);
+
+  // return to start
+  go('a1');
+  flashNote('ODA reiniciada.');
+}
+
+function init(){
+  renderCalendar();
+  renderSchedule();
+  renderBanks();
+  setHeader(0);
+  wire();
+}
+init();
+</script>
+
+</body>
+</html>

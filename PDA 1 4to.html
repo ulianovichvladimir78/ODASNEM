@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ODA | Textos discontinuos</title>
+  <style>
+    :root{
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --card:#ffffff;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --soft:#fee2e2;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{
+      margin:0;
+      font-size: clamp(20px, 2.4vw, 30px);
+      letter-spacing:.2px;
+    }
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.85); max-width:820px}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .pill b{font-weight:700}
+    .pill span{color:rgba(255,255,255,.9)}
+    main{max-width:1100px; margin:0 auto; padding:12px 16px 0}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .card{
+      grid-column: span 12;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(226,232,240,.9);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(226,232,240,.9);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px}
+    .card .bd{padding:16px}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 8px 16px rgba(29,78,216,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{
+      background:#0f172a;
+      box-shadow: 0 8px 16px rgba(15,23,42,.18);
+    }
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(15,23,42,.25);
+      color:#0f172a;
+      box-shadow:none;
+      font-weight:700;
+    }
+    button.muted{
+      background:#64748b;
+      box-shadow:none;
+      font-weight:700;
+    }
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(14,165,233,.10);
+      border:1px solid rgba(14,165,233,.25);
+      color:#075985;
+      font-weight:700;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.ok{background: rgba(22,163,74,.10); border-color: rgba(22,163,74,.25); color:#166534}
+    .tag.bad{background: rgba(220,38,38,.10); border-color: rgba(220,38,38,.25); color:#7f1d1d}
+    .two{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+    .panel{
+      background:#fff;
+      border:1px solid rgba(226,232,240,.95);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .q{
+      margin:12px 0;
+      padding:12px;
+      border-radius:14px;
+      background: #f8fafc;
+      border:1px solid rgba(226,232,240,.95);
+    }
+    .q .qtitle{font-weight:800; margin-bottom:10px}
+    .opts{display:grid; gap:8px}
+    .opt{
+      display:flex; align-items:flex-start; gap:10px;
+      background:#fff;
+      border:1px solid rgba(226,232,240,.95);
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{margin-top:3px}
+    .opt:hover{border-color: rgba(29,78,216,.35)}
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      color:#0f172a;
+      background:#fff;
+      display:none;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(22,163,74,.55); background: rgba(22,163,74,.06)}
+    .feedback.bad{border-color: rgba(220,38,38,.55); background: rgba(220,38,38,.06)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#0f172a;
+      color:#fff;
+      display:inline-block;
+    }
+    .progressWrap{
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    }
+    .bar{
+      width: 240px;
+      height: 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.25);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(14,165,233,.95), rgba(29,78,216,.95));
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+    .orderList{display:grid; gap:10px; margin-top:8px}
+    .orderItem{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid rgba(226,232,240,.95);
+    }
+    .orderItem .left{display:flex; gap:10px; align-items:center}
+    .orderItem .num{
+      width:28px; height:28px; display:grid; place-items:center;
+      border-radius:10px;
+      background: rgba(29,78,216,.10);
+      border:1px solid rgba(29,78,216,.18);
+      color:#1d4ed8;
+      font-weight:900;
+    }
+    .miniBtn{
+      padding:8px 10px; border-radius:10px; font-weight:900;
+      background:#0f172a;
+      box-shadow:none;
+    }
+    .miniBtn.ghost{
+      background:transparent; color:#0f172a; border:1px solid rgba(15,23,42,.25);
+    }
+    .bars{display:grid; gap:10px; margin-top:6px}
+    .barRow{
+      display:grid; grid-template-columns: 120px 1fr 48px;
+      gap:10px; align-items:center;
+    }
+    @media (max-width: 520px){ .barRow{grid-template-columns:1fr; gap:6px} }
+    .barTrack{height:14px; border-radius:999px; background:#e2e8f0; overflow:hidden; border:1px solid rgba(148,163,184,.35)}
+    .barFill{height:100%; width:30%; background: linear-gradient(90deg, rgba(14,165,233,.95), rgba(29,78,216,.95))}
+    .small{font-size:12.5px; color:var(--muted); line-height:1.35}
+    .page{display:none}
+    .page.active{display:block}
+    .homeCards{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+      margin-top:10px;
+    }
+    .homeCards .card{grid-column: span 6}
+    @media (max-width: 860px){ .homeCards .card{grid-column: span 12} }
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(2,6,23,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(226,232,240,.95);
+      box-shadow: 0 20px 60px rgba(2,6,23,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+    .brand-left img{
+      width:95px;
+      height:auto;
+      border-radius:10px;
+      filter:none;
+      opacity:.35;
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:.95;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.88);
+      font-weight:800;
+      text-shadow: 0 6px 10px rgba(2,6,23,.5);
+    }
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(14,165,233,.10);
+      border:1px solid rgba(14,165,233,.25);
+      color:#075985;
+      font-size:13px;
+      line-height:1.35;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>Textos discontinuos | ODA</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Identifica características y funciones de los textos discontinuos, en particular de líneas del tiempo, tablas de doble entrada y gráficas.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page active" id="pageHome">
+    <div class="note">
+      Elige una opción. Puedes volver al menú en cualquier momento con <b>Inicio</b>. La ODA se completa al llegar a <b>100%</b>.
+    </div>
+
+    <div class="homeCards">
+      <article class="card">
+        <div class="hd">
+          <div>
+            <h2>ODA 1. Organizamos nuestra semana</h2>
+            <div class="meta">Tabla de doble entrada + Línea del tiempo</div>
+          </div>
+          <span class="tag">Organizar actividades</span>
+        </div>
+        <div class="bd">
+          <p class="small">Comprende para qué sirve una <b>tabla de doble entrada</b> y cómo una <b>línea del tiempo</b> ayuda a ordenar eventos.</p>
+          <div class="btnrow">
+            <button onclick="go('oda1')">Entrar</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <div>
+            <h2>ODA 2. Así fue nuestro día</h2>
+            <div class="meta">Línea del tiempo + Gráfica sencilla</div>
+          </div>
+          <span class="tag">Ordenar y comparar</span>
+        </div>
+        <div class="bd">
+          <p class="small">Ordena momentos del día escolar y lee una gráfica de “actividad favorita”.</p>
+          <div class="btnrow">
+            <button onclick="go('oda2')">Entrar</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <div>
+            <h2>ODA 3. Leemos datos del grupo</h2>
+            <div class="meta">Tabla + Gráfica (mismos datos)</div>
+          </div>
+          <span class="tag">Interpretar datos</span>
+        </div>
+        <div class="bd">
+          <p class="small">Relaciona una tabla con una gráfica y responde preguntas de interpretación.</p>
+          <div class="btnrow">
+            <button onclick="go('oda3')">Entrar</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="hd">
+          <div>
+            <h2>ODA 4. ¿Cuál texto uso?</h2>
+            <div class="meta">Línea del tiempo + Tabla + Gráfica</div>
+          </div>
+          <span class="tag">Elegir el mejor</span>
+        </div>
+        <div class="bd">
+          <p class="small">Decide qué texto discontinuo conviene según la información.</p>
+          <div class="btnrow">
+            <button onclick="go('oda4')">Entrar</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="page" id="pageOda1">
+    <article class="card">
+      <div class="hd">
+        <div>
+          <h2>ODA 1. Organizamos nuestra semana</h2>
+          <div class="meta">Objetivo: identificar funciones de <b>tabla de doble entrada</b> y <b>línea del tiempo</b>.</div>
+        </div>
+        <div class="btnrow">
+          <button class="ghost" onclick="go('home')">Inicio</button>
+          <button class="secondary" onclick="resetOda('oda1')">Reiniciar</button>
+          <button class="muted" onclick="printResults()">Imprimir resultados</button>
+        </div>
+      </div>
+      <div class="bd two">
+        <div class="panel">
+          <h3>Mini‑situación</h3>
+          <p>La escuela hará actividades en la semana. Observa este ejemplo de <b>tabla</b> y luego una <b>línea del tiempo</b>.</p>
+
+          <div class="q">
+            <div class="qtitle">1) ¿Para qué sirve una <u>tabla de doble entrada</u>?</div>
+            <div class="opts" data-q="oda1q1">
+              <label class="opt"><input type="radio" name="oda1q1" value="a"> Para contar letras de una palabra.</label>
+              <label class="opt"><input type="radio" name="oda1q1" value="b"> Para organizar información comparando dos criterios (por ejemplo: día y actividad).</label>
+              <label class="opt"><input type="radio" name="oda1q1" value="c"> Para escribir un cuento largo.</label>
+            </div>
+            <div class="feedback" id="fb-oda1q1"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">2) Una <u>línea del tiempo</u> sirve para…</div>
+            <div class="opts" data-q="oda1q2">
+              <label class="opt"><input type="radio" name="oda1q2" value="a"> Ordenar hechos por antes y después.</label>
+              <label class="opt"><input type="radio" name="oda1q2" value="b"> Poner palabras en orden alfabético.</label>
+              <label class="opt"><input type="radio" name="oda1q2" value="c"> Dibujar un mapa.</label>
+            </div>
+            <div class="feedback" id="fb-oda1q2"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">3) ¿Qué texto discontinuo usarías para organizar “Día” y “Actividad”?</div>
+            <div class="opts" data-q="oda1q3">
+              <label class="opt"><input type="radio" name="oda1q3" value="a"> Tabla de doble entrada.</label>
+              <label class="opt"><input type="radio" name="oda1q3" value="b"> Poema.</label>
+              <label class="opt"><input type="radio" name="oda1q3" value="c"> Adivinanza.</label>
+            </div>
+            <div class="feedback" id="fb-oda1q3"></div>
+          </div>
+
+          <div class="btnrow">
+            <button onclick="hint('oda1')">Dame la respuesta</button>
+            <button id="verify-oda1" onclick="verify('oda1')">Verifico mi respuesta</button>
+            <button class="ghost" onclick="newAttempt('oda1')">Nuevos valores / Intentar</button>
+          </div>
+
+          <div class="note">
+            Regla anti‑trampa: si usas <b>Dame la respuesta</b>, el botón <b>Verifico mi respuesta</b> se deshabilita hasta presionar <b>Nuevos valores / Intentar</b>.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Ejemplo visual (simplificado)</h3>
+          <p class="small"><b>Tabla de doble entrada:</b> Días × Actividades</p>
+          <div class="q">
+            <div class="small"><b>Lunes:</b> Lectura | <b>Martes:</b> Deportes | <b>Miércoles:</b> Ciencias<br>
+              <b>Jueves:</b> Arte | <b>Viernes:</b> Exposición</div>
+          </div>
+          <p class="small"><b>Línea del tiempo:</b> Orden de la semana</p>
+          <div class="q">
+            <div class="small">Lun → Mar → Mié → Jue → Vie</div>
+          </div>
+          <p class="small">Cuando necesitas <b>comparar dos cosas a la vez</b> (día/actividad), conviene la <b>tabla</b>. Cuando necesitas <b>ordenar por tiempo</b>, conviene la <b>línea del tiempo</b>.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="page" id="pageOda2">
+    <article class="card">
+      <div class="hd">
+        <div>
+          <h2>ODA 2. Así fue nuestro día</h2>
+          <div class="meta">Objetivo: ordenar eventos (línea del tiempo) e interpretar una gráfica sencilla.</div>
+        </div>
+        <div class="btnrow">
+          <button class="ghost" onclick="go('home')">Inicio</button>
+          <button class="secondary" onclick="resetOda('oda2')">Reiniciar</button>
+          <button class="muted" onclick="printResults()">Imprimir resultados</button>
+        </div>
+      </div>
+
+      <div class="bd two">
+        <div class="panel">
+          <h3>Actividad A: Ordena el día (línea del tiempo)</h3>
+          <p>Coloca los momentos del día escolar del primero al último.</p>
+
+          <div class="orderList" id="oda2Order"></div>
+
+          <div class="btnrow">
+            <button onclick="checkOrder()">Revisar orden</button>
+            <button class="ghost" onclick="shuffleOrder()">Mezclar</button>
+          </div>
+          <div class="feedback" id="fb-oda2order"></div>
+
+          <hr style="border:none;border-top:1px solid rgba(226,232,240,.9); margin:14px 0;">
+
+          <h3>Actividad B: Lee la gráfica</h3>
+          <p class="small">En esta gráfica, cada barra representa cuántos niños prefieren una actividad.</p>
+
+          <div class="bars" id="oda2Bars"></div>
+
+          <div class="q">
+            <div class="qtitle">1) ¿Cuál actividad tiene <u>más</u> votos?</div>
+            <div class="opts" data-q="oda2q1">
+              <label class="opt"><input type="radio" name="oda2q1" value="a"> Lectura</label>
+              <label class="opt"><input type="radio" name="oda2q1" value="b"> Deportes</label>
+              <label class="opt"><input type="radio" name="oda2q1" value="c"> Arte</label>
+            </div>
+            <div class="feedback" id="fb-oda2q1"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">2) ¿Para qué sirve una gráfica?</div>
+            <div class="opts" data-q="oda2q2">
+              <label class="opt"><input type="radio" name="oda2q2" value="a"> Para ver datos de forma rápida.</label>
+              <label class="opt"><input type="radio" name="oda2q2" value="b"> Para escribir una carta.</label>
+              <label class="opt"><input type="radio" name="oda2q2" value="c"> Para inventar trabalenguas.</label>
+            </div>
+            <div class="feedback" id="fb-oda2q2"></div>
+          </div>
+
+          <div class="btnrow">
+            <button onclick="hint('oda2')">Dame la respuesta</button>
+            <button id="verify-oda2" onclick="verify('oda2')">Verifico mi respuesta</button>
+            <button class="ghost" onclick="newAttempt('oda2')">Nuevos valores / Intentar</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Pista didáctica</h3>
+          <p class="small">
+            <b>Línea del tiempo</b>: ordena lo que pasa primero, después y al final.<br>
+            <b>Gráfica</b>: muestra cantidades (más/menos) de forma visual.
+          </p>
+          <div class="q">
+            <div class="small"><b>Tip:</b> Antes de contestar, di en voz alta: “¿Qué me pide? ¿Ordenar en el tiempo o comparar cantidades?”</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="page" id="pageOda3">
+    <article class="card">
+      <div class="hd">
+        <div>
+          <h2>ODA 3. Leemos datos del grupo</h2>
+          <div class="meta">Objetivo: relacionar tabla y gráfica; interpretar información.</div>
+        </div>
+        <div class="btnrow">
+          <button class="ghost" onclick="go('home')">Inicio</button>
+          <button class="secondary" onclick="resetOda('oda3')">Reiniciar</button>
+          <button class="muted" onclick="printResults()">Imprimir resultados</button>
+        </div>
+      </div>
+
+      <div class="bd two">
+        <div class="panel">
+          <h3>Tabla (datos del grupo)</h3>
+          <p class="small">Mascota favorita (ejemplo):</p>
+          <div class="q small" id="oda3Table"></div>
+
+          <h3>Gráfica (los mismos datos)</h3>
+          <div class="bars" id="oda3Bars"></div>
+
+          <div class="q">
+            <div class="qtitle">1) ¿Qué mascota tiene <u>menos</u> votos?</div>
+            <div class="opts" data-q="oda3q1">
+              <label class="opt"><input type="radio" name="oda3q1" value="a"> Perro</label>
+              <label class="opt"><input type="radio" name="oda3q1" value="b"> Gato</label>
+              <label class="opt"><input type="radio" name="oda3q1" value="c"> Pez</label>
+            </div>
+            <div class="feedback" id="fb-oda3q1"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">2) ¿En cuál se ve mejor el <u>detalle exacto</u> (número)?</div>
+            <div class="opts" data-q="oda3q2">
+              <label class="opt"><input type="radio" name="oda3q2" value="a"> En la tabla.</label>
+              <label class="opt"><input type="radio" name="oda3q2" value="b"> En un cuento.</label>
+              <label class="opt"><input type="radio" name="oda3q2" value="c"> En una adivinanza.</label>
+            </div>
+            <div class="feedback" id="fb-oda3q2"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">3) ¿En cuál se ve más rápido cuál es “más” y “menos”?</div>
+            <div class="opts" data-q="oda3q3">
+              <label class="opt"><input type="radio" name="oda3q3" value="a"> En la gráfica.</label>
+              <label class="opt"><input type="radio" name="oda3q3" value="b"> En un poema.</label>
+              <label class="opt"><input type="radio" name="oda3q3" value="c"> En un trabalenguas.</label>
+            </div>
+            <div class="feedback" id="fb-oda3q3"></div>
+          </div>
+
+          <div class="btnrow">
+            <button onclick="hint('oda3')">Dame la respuesta</button>
+            <button id="verify-oda3" onclick="verify('oda3')">Verifico mi respuesta</button>
+            <button class="ghost" onclick="newAttempt('oda3')">Nuevos valores / Intentar</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Lo que debes notar</h3>
+          <p class="small">
+            La <b>tabla</b> organiza datos con claridad (número exacto). La <b>gráfica</b> ayuda a comparar rápido.
+          </p>
+          <div class="q small">
+            Si la pregunta dice “¿cuántos exactamente?”, casi siempre conviene revisar la <b>tabla</b>.<br>
+            Si la pregunta dice “¿qué es más/menos?”, conviene ver la <b>gráfica</b>.
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="page" id="pageOda4">
+    <article class="card">
+      <div class="hd">
+        <div>
+          <h2>ODA 4. ¿Cuál texto uso?</h2>
+          <div class="meta">Objetivo: elegir el texto discontinuo adecuado según la información.</div>
+        </div>
+        <div class="btnrow">
+          <button class="ghost" onclick="go('home')">Inicio</button>
+          <button class="secondary" onclick="resetOda('oda4')">Reiniciar</button>
+          <button class="muted" onclick="printResults()">Imprimir resultados</button>
+        </div>
+      </div>
+
+      <div class="bd two">
+        <div class="panel">
+          <h3>Selecciona el mejor texto</h3>
+          <p>Lee cada situación y elige: <b>línea del tiempo</b>, <b>tabla</b> o <b>gráfica</b>.</p>
+
+          <div class="q">
+            <div class="qtitle">1) “Quiero ordenar las etapas del crecimiento de una planta.”</div>
+            <div class="opts" data-q="oda4q1">
+              <label class="opt"><input type="radio" name="oda4q1" value="a"> Línea del tiempo</label>
+              <label class="opt"><input type="radio" name="oda4q1" value="b"> Tabla de doble entrada</label>
+              <label class="opt"><input type="radio" name="oda4q1" value="c"> Gráfica</label>
+            </div>
+            <div class="feedback" id="fb-oda4q1"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">2) “Quiero comparar qué alumnos trajeron: agua / jugo / leche.”</div>
+            <div class="opts" data-q="oda4q2">
+              <label class="opt"><input type="radio" name="oda4q2" value="a"> Línea del tiempo</label>
+              <label class="opt"><input type="radio" name="oda4q2" value="b"> Tabla de doble entrada</label>
+              <label class="opt"><input type="radio" name="oda4q2" value="c"> Cuento</label>
+            </div>
+            <div class="feedback" id="fb-oda4q2"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">3) “Quiero ver rápido cuál sabor de paleta es el más elegido.”</div>
+            <div class="opts" data-q="oda4q3">
+              <label class="opt"><input type="radio" name="oda4q3" value="a"> Tabla</label>
+              <label class="opt"><input type="radio" name="oda4q3" value="b"> Gráfica</label>
+              <label class="opt"><input type="radio" name="oda4q3" value="c"> Carta</label>
+            </div>
+            <div class="feedback" id="fb-oda4q3"></div>
+          </div>
+
+          <div class="q">
+            <div class="qtitle">4) “Quiero ordenar las actividades de un proyecto por semanas (semana 1, 2, 3…).”</div>
+            <div class="opts" data-q="oda4q4">
+              <label class="opt"><input type="radio" name="oda4q4" value="a"> Línea del tiempo</label>
+              <label class="opt"><input type="radio" name="oda4q4" value="b"> Gráfica</label>
+              <label class="opt"><input type="radio" name="oda4q4" value="c"> Adivinanza</label>
+            </div>
+            <div class="feedback" id="fb-oda4q4"></div>
+          </div>
+
+          <div class="btnrow">
+            <button onclick="hint('oda4')">Dame la respuesta</button>
+            <button id="verify-oda4" onclick="verify('oda4')">Verifico mi respuesta</button>
+            <button class="ghost" onclick="newAttempt('oda4')">Nuevos valores / Intentar</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Regla rápida</h3>
+          <div class="q small">
+            <b>Tiempo / orden</b> → Línea del tiempo<br>
+            <b>Comparar dos criterios (filas y columnas)</b> → Tabla de doble entrada<br>
+            <b>Comparar cantidades “más/menos”</b> → Gráfica
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="tag ok" style="justify-content:center; margin:0 auto 10px; width:max-content;">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o volver al inicio para elegir otra opción.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      <button class="secondary" onclick="hideOverlay()">Cerrar</button>
+      <button onclick="go('home')">Ir al inicio</button>
+    </div>
+  </div>
+</div>
+
+<div class="brand-left">
+  <img src="imagenes/escudo.png" alt="Escudo (difuminado)">
+</div>
+<div class="brand-right">
+  <img src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+  const APP = {
+    active: 'home',
+    timer: { start: null, elapsed: 0, handle: null, running: false },
+    totals: { oda1: 3, oda2: 3, oda3: 3, oda4: 4 },
+    correct: { oda1: 0, oda2: 0, oda3: 0, oda4: 0 },
+    answered: { oda1: new Set(), oda2: new Set(), oda3: new Set(), oda4: new Set() },
+    usedHint: { oda1: false, oda2: false, oda3: false, oda4: false },
+    orderOk: false,
+    log: []
+  };
+
+  const KEYS = {
+    oda1: { oda1q1:'b', oda1q2:'a', oda1q3:'a' },
+    oda2: { oda2q1:'b', oda2q2:'a' },
+    oda3: { oda3q1:'c', oda3q2:'a', oda3q3:'a' },
+    oda4: { oda4q1:'a', oda4q2:'b', oda4q3:'b', oda4q4:'a' }
+  };
+
+  const DATA = {
+    oda2Bars: [
+      { label:'Lectura', value: 6 },
+      { label:'Deportes', value: 9 },
+      { label:'Arte', value: 5 }
+    ],
+    oda3Pets: [
+      { label:'Perro', value: 8 },
+      { label:'Gato', value: 6 },
+      { label:'Pez', value: 3 }
+    ]
+  };
+
+  function go(where){
+    hideOverlay();
+    const pages = {
+      home: 'pageHome',
+      oda1: 'pageOda1',
+      oda2: 'pageOda2',
+      oda3: 'pageOda3',
+      oda4: 'pageOda4',
+    };
+    for (const id of Object.values(pages)){
+      document.getElementById(id).classList.remove('active');
+    }
+    document.getElementById(pages[where]).classList.add('active');
+    APP.active = where;
+
+    if(!APP.timer.running && where !== 'home'){ startTimer(); }
+
+    if(where === 'oda2'){ renderOda2(); }
+    if(where === 'oda3'){ renderOda3(); }
+
+    updateHeader();
+  }
+
+  function startTimer(){
+    APP.timer.start = Date.now();
+    APP.timer.running = true;
+    APP.timer.handle = setInterval(()=>{
+      const now = Date.now();
+      APP.timer.elapsed = Math.floor((now - APP.timer.start)/1000);
+      document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+    }, 250);
+  }
+  function stopTimer(){
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer.handle = null;
+    APP.timer.running = false;
+  }
+  function fmtTime(s){
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return mm+':'+ss;
+  }
+
+  function totalQuestionsAll(){
+    return APP.totals.oda1 + APP.totals.oda2 + APP.totals.oda3 + APP.totals.oda4;
+  }
+  function answeredAllCount(){
+    return APP.answered.oda1.size + APP.answered.oda2.size + APP.answered.oda3.size + APP.answered.oda4.size;
+  }
+  function correctAllCount(){
+    return APP.correct.oda1 + APP.correct.oda2 + APP.correct.oda3 + APP.correct.oda4;
+  }
+  function percent(x, total){
+    if(total<=0) return 0;
+    return Math.round((x/total)*100);
+  }
+  function updateHeader(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    document.getElementById('progLabel').textContent = prog + '%';
+    document.getElementById('progBar').style.width = prog + '%';
+    document.getElementById('scoreLabel').textContent = sc + '%';
+
+    if(prog >= 100){
+      showOverlay();
+      stopTimer();
+    }
+  }
+
+  function hint(oda){
+    APP.usedHint[oda] = true;
+    const btn = document.getElementById('verify-'+oda);
+    if(btn){ btn.disabled = true; }
+    if(oda === 'oda2'){
+      flashNote('Respuestas: (Orden correcto) Entrada → Clase 1 → Recreo → Clase 2 → Salida. Preguntas: 1) Deportes. 2) Para ver datos de forma rápida.');
+      return;
+    }
+    const entries = Object.entries(KEYS[oda]);
+    const lines = entries.map(([q, a])=> q + ' → ' + a.toUpperCase()).join(' | ');
+    flashNote('Respuestas: ' + lines);
+  }
+  function newAttempt(oda){
+    APP.usedHint[oda] = false;
+    const btn = document.getElementById('verify-'+oda);
+    if(btn){ btn.disabled = false; }
+    flashNote('Listo: puedes volver a verificar.');
+  }
+  function flashNote(text){
+    const el = document.createElement('div');
+    el.style.position='fixed';
+    el.style.left='50%';
+    el.style.top='18px';
+    el.style.transform='translateX(-50%)';
+    el.style.background='rgba(255,255,255,.92)';
+    el.style.border='1px solid rgba(226,232,240,.95)';
+    el.style.boxShadow='0 18px 40px rgba(2,6,23,.28)';
+    el.style.padding='10px 12px';
+    el.style.borderRadius='14px';
+    el.style.maxWidth='900px';
+    el.style.width='calc(100% - 28px)';
+    el.style.zIndex='99999';
+    el.style.color='#0f172a';
+    el.style.fontWeight='800';
+    el.style.fontSize='13px';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+    setTimeout(()=>{ el.remove(); }, 2600);
+  }
+
+  function verify(oda){
+    if(APP.usedHint[oda]){
+      flashNote('Primero presiona "Nuevos valores / Intentar" para habilitar la verificación.');
+      return;
+    }
+
+    const keys = KEYS[oda];
+    if(!keys){ return; }
+
+    if(oda === 'oda2'){
+      if(APP.orderOk){
+        if(!APP.answered.oda2.has('oda2order')){
+          APP.answered.oda2.add('oda2order');
+          APP.correct.oda2 += 1;
+          APP.log.push({ oda:'oda2', qid:'oda2order', ok:true, note:'Orden correcto' });
+        }
+      }
+    }
+
+    for(const [qid, correctVal] of Object.entries(keys)){
+      const chosen = document.querySelector('input[name="'+qid+'"]:checked');
+      const fb = document.getElementById('fb-'+qid);
+      if(!fb) continue;
+
+      if(!chosen){
+        fb.className='feedback show';
+        fb.textContent='Elige una opción antes de verificar.';
+        continue;
+      }
+
+      const ok = chosen.value === correctVal;
+      fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+      fb.textContent = ok ? 'Correcto.' : ('Aún no. Respuesta correcta: ' + correctVal.toUpperCase() + '.');
+
+      if(!APP.answered[oda].has(qid)){
+        APP.answered[oda].add(qid);
+        if(ok) APP.correct[oda] += 1;
+        APP.log.push({ oda, qid, ok, note: ok ? 'Correcto' : 'Incorrecto' });
+      }
+    }
+
+    updateHeader();
+  }
+
+  function resetOda(oda){
+    hideOverlay();
+    const inputs = document.querySelectorAll('#page' + oda.charAt(0).toUpperCase() + oda.slice(1) + ' input[type="radio"]');
+    inputs.forEach(i => i.checked = false);
+
+    const fbs = document.querySelectorAll('#page' + oda.charAt(0).toUpperCase() + oda.slice(1) + ' .feedback');
+    fbs.forEach(f => { f.className='feedback'; f.textContent=''; });
+
+    if(oda === 'oda2'){
+      APP.orderOk = false;
+      APP.answered.oda2.delete('oda2order');
+      APP.correct.oda2 = 0;
+      APP.answered.oda2 = new Set();
+      APP.usedHint.oda2 = false;
+      orderItems = [];
+      renderOda2();
+      const fb = document.getElementById('fb-oda2order');
+      fb.className='feedback';
+      fb.textContent='';
+    }
+
+    APP.answered[oda].clear();
+    APP.correct[oda] = 0;
+    APP.usedHint[oda] = false;
+
+    const btn = document.getElementById('verify-'+oda);
+    if(btn){ btn.disabled = false; }
+
+    APP.log = APP.log.filter(x => x.oda !== oda);
+    updateHeader();
+    flashNote('Reiniciado: ' + oda.toUpperCase());
+  }
+
+  const ORDER_CORRECT = ['Entrada', 'Clase 1', 'Recreo', 'Clase 2', 'Salida'];
+  let orderItems = [];
+
+  function renderOda2(){
+    if(orderItems.length === 0){
+      orderItems = [...ORDER_CORRECT];
+      shuffleOrder();
+    }else{
+      drawOrder();
+    }
+    drawBars('oda2Bars', DATA.oda2Bars);
+    APP.totals.oda2 = 3;
+    updateHeader();
+  }
+
+  function shuffleOrder(){
+    orderItems = [...ORDER_CORRECT].sort(()=>Math.random()-0.5);
+    drawOrder();
+    APP.orderOk = false;
+  }
+
+  function drawOrder(){
+    const wrap = document.getElementById('oda2Order');
+    wrap.innerHTML = '';
+    orderItems.forEach((txt, idx)=>{
+      const row = document.createElement('div');
+      row.className='orderItem';
+      row.innerHTML =
+        '<div class="left">'+
+          '<div class="num">'+(idx+1)+'</div>'+
+          '<div><b>'+txt+'</b></div>'+
+        '</div>'+
+        '<div class="btnrow" style="gap:8px;">'+
+          '<button class="miniBtn ghost" onclick="moveUp('+idx+')">▲</button>'+
+          '<button class="miniBtn ghost" onclick="moveDown('+idx+')">▼</button>'+
+        '</div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  function moveUp(i){
+    if(i<=0) return;
+    const tmp = orderItems[i-1];
+    orderItems[i-1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+  function moveDown(i){
+    if(i>=orderItems.length-1) return;
+    const tmp = orderItems[i+1];
+    orderItems[i+1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+
+  function checkOrder(){
+    const ok = orderItems.join('|') === ORDER_CORRECT.join('|');
+    APP.orderOk = ok;
+    const fb = document.getElementById('fb-oda2order');
+    fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok
+      ? '¡Correcto! Ordenaste los eventos como una línea del tiempo.'
+      : 'Aún no. Revisa qué ocurre primero y qué ocurre al final.';
+
+    if(!APP.answered.oda2.has('oda2order')){
+      APP.answered.oda2.add('oda2order');
+      if(ok) APP.correct.oda2 += 1;
+      APP.log.push({ oda:'oda2', qid:'oda2order', ok, note: ok ? 'Orden correcto' : 'Orden incorrecto' });
+    }
+    updateHeader();
+  }
+
+  function renderOda3(){
+    const t = DATA.oda3Pets;
+    document.getElementById('oda3Table').innerHTML =
+      '<b>Perro:</b> '+t[0].value+' &nbsp;&nbsp; <b>Gato:</b> '+t[1].value+' &nbsp;&nbsp; <b>Pez:</b> '+t[2].value;
+    drawBars('oda3Bars', t);
+    updateHeader();
+  }
+
+  function drawBars(containerId, items){
+    const max = Math.max.apply(null, items.map(x=>x.value).concat([1]));
+    const wrap = document.getElementById(containerId);
+    wrap.innerHTML = '';
+    items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className='barRow';
+      const pct = Math.round((it.value/max)*100);
+      row.innerHTML =
+        '<div><b>'+it.label+'</b></div>'+
+        '<div class="barTrack"><div class="barFill" style="width:'+pct+'%"></div></div>'+
+        '<div class="mono" style="text-align:right"><b>'+it.value+'</b></div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  function showOverlay(){
+    const el = document.getElementById('overlay');
+    el.classList.add('show');
+    setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+  }
+  function hideOverlay(){
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  function printResults(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    const now = new Date();
+    const fecha = now.toLocaleString('es-MX');
+
+    const report = (
+      '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+      '<title>Resultados ODA</title>'+
+      '<style>body{font-family:Arial,sans-serif;margin:24px;color:#111827}h1{margin:0 0 6px}.muted{color:#6b7280}.box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#f8fafc}.k{font-weight:700}</style>'+
+      '</head><body>'+
+      '<h1>Resultados de la ODA: Textos discontinuos</h1>'+
+      '<div class="muted">Fecha y hora: '+fecha+'</div>'+
+      '<div class="box">'+
+        '<div><span class="k">Tiempo:</span> '+fmtTime(APP.timer.elapsed)+'</div>'+
+        '<div><span class="k">Progreso:</span> '+prog+'%</div>'+
+        '<div><span class="k">Aciertos:</span> '+sc+'% ('+cor+'/'+total+')</div>'+
+      '</div>'+
+      '<div class="box"><div class="k">Nombre del alumno:</div><div style="height:28px;border-bottom:1px solid #e5e7eb;margin-top:8px"></div></div>'+
+      '<div class="box"><div class="k">Detalle (primer intento):</div>'+
+        '<table><thead><tr><th>ODA</th><th>Reactivo</th><th>Resultado</th></tr></thead><tbody>'+
+          APP.log.slice(0,200).map(x =>
+            '<tr><td>'+String(x.oda).toUpperCase()+'</td><td>'+x.qid+'</td><td>'+(x.ok?'Correcto':'Incorrecto')+'</td></tr>'
+          ).join('')+
+        '</tbody></table>'+
+        '<div class="muted" style="margin-top:8px;">Autor: El Ruso</div>'+
+      '</div>'+
+      '</body></html>'
+    );
+
+    const w = window.open('', '_blank');
+    if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+    w.document.open();
+    w.document.write(report);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  updateHeader();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Textos discontinuos | ODA (Producción)</title>
+  <style>
+    :root{
+      /* Lenguaje (rojo) */
+      --bg1:#3b0a0a;
+      --bg2:#7a0f0f;
+      --card:#ffffff;
+      --ink:#3b0a0a;
+      --muted:#6b2c2c;
+      --accent:#b91c1c;
+      --accent2:#ef4444;
+      --ok:#15803d;
+      --bad:#b91c1c;
+      --soft:#fee2e2;
+      --shadow: 0 10px 25px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(185,28,28,.35), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(239,68,68,.30), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding-bottom:120px;
+    }
+    header{
+      padding:22px 16px 8px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      color:#fff;
+    }
+    .title h1{margin:0; font-size: clamp(20px, 2.4vw, 30px); letter-spacing:.2px;}
+    .title p{margin:6px 0 0; color:rgba(255,255,255,.88); max-width:980px; line-height:1.35}
+    .pill{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+    }
+    .pill b{font-weight:800}
+    .pill span{color:rgba(255,255,255,.92)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1a0b0b;
+      color:#fff;
+      display:inline-block;
+    }
+    .progressWrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+    .bar{
+      width: 240px; height: 12px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.24);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+    }
+    .mono{font-variant-numeric: tabular-nums; letter-spacing:.2px}
+
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px 16px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      margin:12px 0 14px;
+      backdrop-filter: blur(6px);
+      max-width:1100px;
+      margin-left:auto; margin-right:auto;
+    }
+    .tab{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:none;
+      padding:9px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .tab.active{
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-color: rgba(254,202,202,.85);
+    }
+
+    main{max-width:1100px; margin:0 auto; padding:0 16px 0}
+    .card{
+      background:rgba(255,255,255,.93);
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px 10px;
+      border-bottom:1px solid rgba(254,202,202,.75);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .card .hd h2{margin:0; font-size:18px}
+    .card .hd .meta{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+    .card .bd{padding:16px}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      appearance:none; border:none;
+      background:var(--accent); color:#fff;
+      padding:10px 14px; border-radius:12px;
+      cursor:pointer; font-weight:900;
+      box-shadow: 0 10px 18px rgba(185,28,28,.22);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    button:hover{opacity:.95}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#1a0b0b; box-shadow: 0 8px 16px rgba(26,11,11,.18);}
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(59,10,10,.28);
+      color:var(--ink);
+      box-shadow:none;
+      font-weight:900;
+    }
+    button.muted{background:#8b5a5a; box-shadow:none; font-weight:900;}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .two{display:grid; grid-template-columns: 1.2fr .8fr; gap:14px;}
+    @media (max-width: 860px){ .two{grid-template-columns:1fr} }
+
+    .panel{
+      background:#fff;
+      border:1px solid rgba(254,202,202,.75);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:15px}
+    .panel p{margin:0 0 10px; color:var(--muted); line-height:1.35}
+    .small{font-size:13px; color:var(--muted); line-height:1.35}
+
+    .q{
+      margin:12px 0;
+      padding:12px;
+      border-radius:14px;
+      background:#fff7f7;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .q .qtitle{font-weight:900; margin-bottom:10px}
+
+    .opts{display:grid; gap:8px}
+    .opt{
+      display:flex; align-items:flex-start; gap:10px;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.85);
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{margin-top:3px}
+    .opt:hover{border-color: rgba(185,28,28,.45)}
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.9);
+      color:#1a0b0b;
+      background:#fff;
+      display:none;
+    }
+    .feedback.show{display:block}
+    .feedback.ok{border-color: rgba(21,128,61,.55); background: rgba(21,128,61,.06)}
+    .feedback.bad{border-color: rgba(185,28,28,.55); background: rgba(185,28,28,.06)}
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.ok{background: rgba(21,128,61,.10); border-color: rgba(21,128,61,.25); color:#166534}
+
+    /* table look */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(254,202,202,.85);
+      background:#fff;
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(254,202,202,.7);
+      font-size:13px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{background:#fff1f1; font-weight:900}
+    tr:last-child td{border-bottom:none}
+
+    select, input[type="text"], textarea, input[type="number"]{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(254,202,202,.95);
+      background:#fff;
+      color:var(--ink);
+      font-weight:700;
+      outline:none;
+    }
+    textarea{min-height:86px; resize:vertical; font-weight:700}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 640px){ .row{grid-template-columns:1fr} }
+
+    /* bars */
+    .bars{display:grid; gap:10px; margin-top:8px}
+    .barRow{display:grid; grid-template-columns: 120px 1fr 56px; gap:10px; align-items:center;}
+    @media (max-width: 520px){ .barRow{grid-template-columns:1fr; gap:6px} }
+    .barTrack{height:14px; border-radius:999px; background:#fee2e2; overflow:hidden; border:1px solid rgba(239,68,68,.20)}
+    .barFill{height:100%; width:30%; background: linear-gradient(90deg, rgba(239,68,68,.95), rgba(185,28,28,.95))}
+
+    .sliderRow{display:grid; grid-template-columns: 120px 1fr 56px; gap:10px; align-items:center; margin:10px 0;}
+    .sliderRow input[type="range"]{width:100%}
+
+    /* ordering */
+    .orderList{display:grid; gap:10px; margin-top:8px}
+    .orderItem{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid rgba(254,202,202,.85);
+    }
+    .orderItem .left{display:flex; gap:10px; align-items:center}
+    .orderItem .num{
+      width:28px; height:28px; display:grid; place-items:center;
+      border-radius:10px;
+      background: rgba(239,68,68,.10);
+      border:1px solid rgba(239,68,68,.25);
+      color:#7a0f0f;
+      font-weight:900;
+    }
+    .miniBtn{
+      padding:8px 10px; border-radius:10px; font-weight:900;
+      background:#1a0b0b; box-shadow:none;
+    }
+    .miniBtn.ghost{
+      background:transparent; color:#1a0b0b;
+      border:1px solid rgba(59,10,10,.28);
+    }
+
+    /* pages */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* completion overlay */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(26,11,11,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      max-width:720px;
+      width:100%;
+      border-radius:22px;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(254,202,202,.9);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      padding:18px;
+      text-align:center;
+    }
+    .overlay .box h2{margin:8px 0 6px; font-size:26px}
+    .overlay .box p{margin:0; color:var(--muted)}
+
+    /* Institutional marks (saved standard) */
+    .brand-left, .brand-right{
+      position:fixed;
+      bottom:14px;
+      z-index:999;
+      opacity:1;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+    }
+    .brand-left{left:14px}
+    .brand-right{right:14px; text-align:right}
+    .brand-left img{
+      width:95px;
+      height:auto;
+      border-radius:10px;
+      filter:none;
+      opacity:.35;
+    }
+    .brand-right img{
+      width:100px;
+      height:auto;
+      opacity:1;
+    }
+    .brand-right .credit{
+      margin-top:2px;
+      font-size:12px;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+      text-shadow: 0 6px 10px rgba(0,0,0,.5);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="title">
+      <h1>Textos discontinuos | ODA</h1>
+      <p><b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.<br>
+         <b>PDA:</b> Produce textos discontinuos para organizar información que expone a otras personas.
+      </p>
+    </div>
+
+    <div class="pill">
+      <span><b>Tiempo:</b> <span class="mono" id="timeLabel">00:00</span></span>
+      <span class="kbd">Aciertos</span>
+      <span><b id="scoreLabel">0%</b></span>
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progreso"><i id="progBar"></i></div>
+        <span class="mono" id="progLabel">0%</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Actividades">
+  <button class="tab active" id="tab-a1" onclick="go('a1')">Actividad 1</button>
+  <button class="tab" id="tab-a2" onclick="go('a2')">Actividad 2</button>
+  <button class="tab" id="tab-a3" onclick="go('a3')">Actividad 3</button>
+  <button class="tab" id="tab-a4" onclick="go('a4')">Actividad 4</button>
+  <button class="tab" id="tab-final" onclick="go('final')">Cierre</button>
+</div>
+
+<main>
+  <article class="card">
+    <div class="hd">
+      <div>
+        <h2 id="sectionTitle">Actividad 1. Organizo para explicar</h2>
+        <div class="meta" id="sectionMeta">Produce una tabla y elige el mejor texto discontinuo para exponer al grupo.</div>
+      </div>
+      <div class="btnrow">
+        <button class="secondary" onclick="resetAll()">Reiniciar ODA</button>
+        <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <!-- ACT 1 -->
+      <section class="page active" id="page-a1">
+        <div class="two">
+          <div class="panel">
+            <h3>Producción: tabla para exponer</h3>
+            <p>Completa la tabla de “Feria de lectura”. Luego responde y prepárate para explicarla a otras personas.</p>
+
+            <div class="q">
+              <div class="qtitle">Tabla de actividades (elige una opción por día)</div>
+              <table>
+                <thead><tr><th>Día</th><th>Actividad</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Lunes</td>
+                    <td>
+                      <select id="a1_mon">
+                        <option value="">Selecciona…</option>
+                        <option>Elegir libro</option>
+                        <option>Hacer cartel</option>
+                        <option>Ensayar lectura en voz alta</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Martes</td>
+                    <td>
+                      <select id="a1_tue">
+                        <option value="">Selecciona…</option>
+                        <option>Leer 20 minutos</option>
+                        <option>Invitar a otro grupo</option>
+                        <option>Ordenar sillas</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Miércoles</td>
+                    <td>
+                      <select id="a1_wed">
+                        <option value="">Selecciona…</option>
+                        <option>Subrayar ideas</option>
+                        <option>Traer bocina</option>
+                        <option>Decorar salón</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Jueves</td>
+                    <td>
+                      <select id="a1_thu">
+                        <option value="">Selecciona…</option>
+                        <option>Hacer resumen</option>
+                        <option>Repartir dulces</option>
+                        <option>Tomar fotos</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Viernes</td>
+                    <td>
+                      <select id="a1_fri">
+                        <option value="">Selecciona…</option>
+                        <option>Exponer al grupo</option>
+                        <option>Jugar fútbol</option>
+                        <option>Ir a excursión</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="small" style="margin-top:10px">
+                Tip para exponer: “En esta tabla se ve el <b>día</b> y la <b>actividad</b>. Así no se nos olvida nada.”
+              </div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Qué texto discontinuo ayuda mejor para exponer “Día + Actividad”?</div>
+              <div class="opts" data-q="a1q1">
+                <label class="opt"><input type="radio" name="a1q1" value="a"> Tabla</label>
+                <label class="opt"><input type="radio" name="a1q1" value="b"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a1q1" value="c"> Cuento</label>
+              </div>
+              <div class="feedback" id="fb-a1q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) Para que otros entiendan, una tabla debe tener…</div>
+              <div class="opts" data-q="a1q2">
+                <label class="opt"><input type="radio" name="a1q2" value="a"> Título y categorías claras (día / actividad).</label>
+                <label class="opt"><input type="radio" name="a1q2" value="b"> Rimas y trabalenguas.</label>
+                <label class="opt"><input type="radio" name="a1q2" value="c"> Personajes y diálogos.</label>
+              </div>
+              <div class="feedback" id="fb-a1q2"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a1')">Dame la respuesta</button>
+              <button id="verify-a1" onclick="verify('a1')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a1')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a2')">Siguiente</button>
+            </div>
+
+            <div class="feedback" id="fb-a1prod"></div>
+
+            <div class="note">
+              Regla anti-trampa: si usas <b>Dame la respuesta</b>, <b>Verifico mi respuesta</b> se deshabilita hasta presionar <b>Nuevos valores / Intentar</b>.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Guion corto para exponer (modelo)</h3>
+            <div class="q">
+              <div class="qtitle">“Yo organicé la información en una tabla porque…”</div>
+              <div class="small">se ve rápido qué toca cada día y es fácil explicarlo a otras personas.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Un ejemplo de explicación</div>
+              <div class="small">
+                “El lunes elegimos el libro. El martes leemos 20 minutos. El miércoles subrayamos ideas…”
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 2 -->
+      <section class="page" id="page-a2">
+        <div class="two">
+          <div class="panel">
+            <h3>Producción: gráfica para exponer resultados</h3>
+            <p>El grupo hizo una encuesta: “¿Qué texto te gusta más?” Ajusta los valores para construir la gráfica y luego interprétala.</p>
+
+            <div class="q">
+              <div class="qtitle">1) Ajusta los valores (la suma debe ser 20)</div>
+
+              <div class="sliderRow">
+                <div><b>Cuentos</b></div>
+                <input type="range" id="s_cuentos" min="0" max="20" value="6" oninput="updateSurvey()">
+                <div class="mono" style="text-align:right"><b id="v_cuentos">6</b></div>
+              </div>
+              <div class="sliderRow">
+                <div><b>Leyendas</b></div>
+                <input type="range" id="s_leyendas" min="0" max="20" value="9" oninput="updateSurvey()">
+                <div class="mono" style="text-align:right"><b id="v_leyendas">9</b></div>
+              </div>
+              <div class="sliderRow">
+                <div><b>Poemas</b></div>
+                <input type="range" id="s_poemas" min="0" max="20" value="5" oninput="updateSurvey()">
+                <div class="mono" style="text-align:right"><b id="v_poemas">5</b></div>
+              </div>
+
+              <div class="note" id="sumNote">Suma: 20</div>
+              <div class="bars" id="a2Bars"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) ¿Qué se puede decir al exponer la gráfica?</div>
+              <div class="opts" data-q="a2q1">
+                <label class="opt"><input type="radio" name="a2q1" value="a"> “La barra más alta muestra lo que más eligió el grupo.”</label>
+                <label class="opt"><input type="radio" name="a2q1" value="b"> “Aquí escribimos un cuento con personajes.”</label>
+                <label class="opt"><input type="radio" name="a2q1" value="c"> “La gráfica ordena eventos por tiempo.”</label>
+              </div>
+              <div class="feedback" id="fb-a2q1"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) Cuando expones, es importante decir…</div>
+              <div class="opts" data-q="a2q2">
+                <label class="opt"><input type="radio" name="a2q2" value="a"> qué compara la gráfica y qué significan las barras.</label>
+                <label class="opt"><input type="radio" name="a2q2" value="b"> solo el color que te gusta.</label>
+                <label class="opt"><input type="radio" name="a2q2" value="c"> un chiste, aunque no tenga relación.</label>
+              </div>
+              <div class="feedback" id="fb-a2q2"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a2')">Dame la respuesta</button>
+              <button id="verify-a2" onclick="verify('a2')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a2')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a3')">Siguiente</button>
+            </div>
+
+            <div class="feedback" id="fb-a2prod"></div>
+
+            <div class="note">
+              Para completar la producción, la suma debe ser 20 y la gráfica debe representar esos datos.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Frases listas para exponer</h3>
+            <div class="q">
+              <div class="qtitle">Inicio</div>
+              <div class="small">“Esta gráfica muestra los resultados de una encuesta del grupo.”</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Dato principal</div>
+              <div class="small">“La opción con más votos es la barra más alta.”</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Cierre</div>
+              <div class="small">“Con estos datos, podemos decidir qué materiales traer a la biblioteca.”</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 3 -->
+      <section class="page" id="page-a3">
+        <div class="two">
+          <div class="panel">
+            <h3>Producción: línea del tiempo para exponer un proceso</h3>
+            <p>Ordena los pasos para preparar una exposición y luego escribe un título claro para tu línea del tiempo.</p>
+
+            <div class="q">
+              <div class="qtitle">Ordena los pasos (usa ▲ ▼)</div>
+              <div class="orderList" id="a3Order"></div>
+              <div class="btnrow">
+                <button onclick="checkOrder()">Revisar orden</button>
+                <button class="ghost" onclick="shuffleOrder()">Mezclar</button>
+              </div>
+              <div class="feedback" id="fb-a3order"></div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">Escribe el título de tu línea del tiempo</div>
+              <input type="text" id="a3_title" placeholder="Ejemplo: Pasos para preparar una exposición">
+              <div class="small" style="margin-top:8px">Un buen título ayuda a que otros entiendan de qué trata tu texto discontinuo.</div>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">Pregunta de reflexión (para exponer)</div>
+              <div class="opts" data-q="a3q1">
+                <label class="opt"><input type="radio" name="a3q1" value="a"> “Ordenar pasos ayuda porque muestra qué va primero y qué va después.”</label>
+                <label class="opt"><input type="radio" name="a3q1" value="b"> “Ordenar pasos ayuda porque inventa datos.”</label>
+                <label class="opt"><input type="radio" name="a3q1" value="c"> “Ordenar pasos ayuda porque cambia el tema.”</label>
+              </div>
+              <div class="feedback" id="fb-a3q1"></div>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a3')">Dame la respuesta</button>
+              <button id="verify-a3" onclick="verify('a3')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a3')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('a4')">Siguiente</button>
+            </div>
+
+            <div class="feedback" id="fb-a3prod"></div>
+
+            <div class="note">
+              En una exposición, puedes señalar la línea del tiempo con el dedo y decir: “Primero… después… al final…”.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Modelo de exposición (corto)</h3>
+            <div class="q">
+              <div class="qtitle">“Mi línea del tiempo se llama…”</div>
+              <div class="small">y muestra los pasos en orden para que cualquiera los entienda.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Recordatorio</div>
+              <div class="small">Si el orden cambia, la explicación se confunde. Por eso el orden importa.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 4 -->
+      <section class="page" id="page-a4">
+        <div class="two">
+          <div class="panel">
+            <h3>Producción: elige el mejor texto y crea una versión breve</h3>
+            <p>Para cada situación, elige el texto discontinuo adecuado. Luego escribe una frase que usarías al exponer.</p>
+
+            <div class="q">
+              <div class="qtitle">1) “Quiero mostrar cuántos niños trajeron: agua / jugo / leche.”</div>
+              <div class="opts" data-q="a4q1">
+                <label class="opt"><input type="radio" name="a4q1" value="a"> Tabla</label>
+                <label class="opt"><input type="radio" name="a4q1" value="b"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a4q1" value="c"> Cuento</label>
+              </div>
+              <div class="feedback" id="fb-a4q1"></div>
+              <textarea id="a4_t1" placeholder="Escribe una frase para exponer (ejemplo: En esta tabla comparamos bebida y cantidad…)."></textarea>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">2) “Quiero ordenar lo que haremos en un proyecto por semanas (semana 1, 2, 3…).”</div>
+              <div class="opts" data-q="a4q2">
+                <label class="opt"><input type="radio" name="a4q2" value="a"> Línea del tiempo</label>
+                <label class="opt"><input type="radio" name="a4q2" value="b"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a4q2" value="c"> Adivinanza</label>
+              </div>
+              <div class="feedback" id="fb-a4q2"></div>
+              <textarea id="a4_t2" placeholder="Escribe una frase para exponer (ejemplo: Esta línea del tiempo muestra el orden por semanas…)."></textarea>
+            </div>
+
+            <div class="q">
+              <div class="qtitle">3) “Quiero ver rápido cuál actividad fue la más elegida en una encuesta.”</div>
+              <div class="opts" data-q="a4q3">
+                <label class="opt"><input type="radio" name="a4q3" value="a"> Gráfica</label>
+                <label class="opt"><input type="radio" name="a4q3" value="b"> Tabla</label>
+                <label class="opt"><input type="radio" name="a4q3" value="c"> Carta</label>
+              </div>
+              <div class="feedback" id="fb-a4q3"></div>
+              <textarea id="a4_t3" placeholder="Escribe una frase para exponer (ejemplo: La barra más alta indica la opción con más votos…)."></textarea>
+            </div>
+
+            <div class="btnrow">
+              <button onclick="hint('a4')">Dame la respuesta</button>
+              <button id="verify-a4" onclick="verify('a4')">Verifico mi respuesta</button>
+              <button class="ghost" onclick="newAttempt('a4')">Nuevos valores / Intentar</button>
+              <button class="ghost" onclick="go('final')">Ir al cierre</button>
+            </div>
+
+            <div class="feedback" id="fb-a4prod"></div>
+            <div class="note">
+              Aquí estás produciendo dos cosas: <b>elegir el texto</b> y <b>preparar cómo lo explicarás</b>.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Mini-checador de exposición</h3>
+            <div class="q">
+              <div class="qtitle">Cuando expongo, debo decir:</div>
+              <div class="small">
+                1) Qué representa mi texto discontinuo.<br>
+                2) Qué significan sus partes (filas/columnas, barras, orden).<br>
+                3) Una conclusión (¿qué aprendimos?).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="page" id="page-final">
+        <div class="two">
+          <div class="panel">
+            <h3>Cierre</h3>
+            <p>Si tu maestra(o) te pide exponer, usa estas respuestas para cerrar.</p>
+
+            <div class="q">
+              <div class="qtitle">1) ¿Qué texto discontinuo te ayuda más a exponer una planeación (día/actividad)?</div>
+              <div class="small">Pista: cuando hay categorías en filas y columnas.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">2) ¿Qué texto discontinuo usarías para resultados de una encuesta?</div>
+              <div class="small">Pista: para comparar cantidades “más/menos”.</div>
+            </div>
+            <div class="q">
+              <div class="qtitle">3) ¿Por qué es importante poner título y orden?</div>
+              <div class="small">Pista: ayuda a que otros comprendan sin confundirse.</div>
+            </div>
+
+            <div class="btnrow">
+              <button class="muted" onclick="printResults()">Imprimir resultados</button>
+              <button class="ghost" onclick="go('a1')">Volver al inicio</button>
+            </div>
+
+            <div class="note">
+              La ODA se completa al verificar todo (100% de progreso). Puedes imprimir resultados para evidencia.
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Resumen de avance</h3>
+            <div class="q">
+              <div class="qtitle">Progreso</div>
+              <div class="small">Reactivos contestados: <b class="mono" id="answeredLabel">0</b> / <b class="mono" id="totalLabel">0</b></div>
+              <div class="small">Aciertos: <b class="mono" id="correctLabel">0</b></div>
+            </div>
+            <div class="q">
+              <div class="qtitle">Tiempo</div>
+              <div class="small">Tiempo total: <b class="mono" id="timeLabel2">00:00</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+</main>
+
+<!-- Completion overlay -->
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="tag ok" style="justify-content:center; margin:0 auto 10px; width:max-content;">Progreso 100%</div>
+    <h2>¡Completaste la ODA!</h2>
+    <p>Excelente. Puedes imprimir tus resultados o revisar las actividades.</p>
+    <div class="btnrow" style="justify-content:center; margin-top:14px;">
+      <button class="muted" onclick="printResults()">Imprimir resultados</button>
+      <button class="secondary" onclick="hideOverlay()">Cerrar</button>
+      <button onclick="go('final')">Ir al cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institutional marks -->
+<div class="brand-left">
+  <img src="imagenes/escudo.png" alt="Escudo">
+</div>
+<div class="brand-right">
+  <img src="imagenes/firma.png" alt="Firma">
+  <div class="credit">Autor: El Ruso</div>
+</div>
+
+<script>
+  // ---------------------------
+  // Global state
+  // ---------------------------
+  const APP = {
+    active: 'a1',
+    timer: { start: null, elapsed: 0, handle: null, running: false },
+    totals: { a1: 3, a2: 3, a3: 3, a4: 6 }, // includes production checks
+    correct: { a1: 0, a2: 0, a3: 0, a4: 0 },
+    answered: { a1: new Set(), a2: new Set(), a3: new Set(), a4: new Set() },
+    usedHint: { a1:false, a2:false, a3:false, a4:false },
+    orderOk: false,
+    orderChecked: false,
+    log: []
+  };
+
+  const KEYS = {
+    a1: { a1q1:'a', a1q2:'a' },
+    a2: { a2q1:'a', a2q2:'a' },
+    a3: { a3q1:'a' },
+    a4: { a4q1:'a', a4q2:'a', a4q3:'a' }
+  };
+
+  // Production targets
+  const A1_TARGET = {
+    a1_mon: "Elegir libro",
+    a1_tue: "Leer 20 minutos",
+    a1_wed: "Subrayar ideas",
+    a1_thu: "Hacer resumen",
+    a1_fri: "Exponer al grupo"
+  };
+  const A2_TARGET = { cuentos:6, leyendas:9, poemas:5, total:20 };
+  const ORDER_CORRECT = ['Elegir tema', 'Buscar información', 'Organizar información', 'Ensayar exposición', 'Exponer al grupo'];
+  let orderItems = [];
+
+  // ---------------------------
+  // Navigation (tabs)
+  // ---------------------------
+  function go(where){
+    const pages = ['a1','a2','a3','a4','final'];
+    pages.forEach(p=>{
+      document.getElementById('page-'+p).classList.remove('active');
+      const tab = document.getElementById('tab-'+p);
+      if(tab) tab.classList.remove('active');
+    });
+    document.getElementById('page-'+where).classList.add('active');
+    const t = document.getElementById('tab-'+where);
+    if(t) t.classList.add('active');
+
+    APP.active = where;
+    if(!APP.timer.running && where !== 'final'){ startTimer(); }
+
+    if(where === 'a2'){ updateSurvey(); }
+    if(where === 'a3'){ renderA3(); }
+
+    const titleMap = {
+      a1: ['Actividad 1. Organizo para explicar', 'Produce una tabla y elige el mejor texto discontinuo para exponer al grupo.'],
+      a2: ['Actividad 2. Explico con una gráfica', 'Construye una gráfica de encuesta y practica cómo explicarla.'],
+      a3: ['Actividad 3. Línea del tiempo de una exposición', 'Ordena pasos, pon un título y explica por qué el orden ayuda.'],
+      a4: ['Actividad 4. Elijo y preparo mi explicación', 'Selecciona el texto adecuado y escribe frases breves para exponer.'],
+      final: ['Cierre', 'Reflexión final y resumen de avance.']
+    };
+    const pair = titleMap[where] || titleMap.a1;
+    document.getElementById('sectionTitle').textContent = pair[0];
+    document.getElementById('sectionMeta').textContent = pair[1];
+
+    updateHeader();
+    updateFinalSummary();
+    hideOverlay();
+  }
+
+  // ---------------------------
+  // Timer
+  // ---------------------------
+  function startTimer(){
+    APP.timer.start = Date.now();
+    APP.timer.running = true;
+    APP.timer.handle = setInterval(()=>{
+      const now = Date.now();
+      APP.timer.elapsed = Math.floor((now - APP.timer.start)/1000);
+      document.getElementById('timeLabel').textContent = fmtTime(APP.timer.elapsed);
+      const t2 = document.getElementById('timeLabel2');
+      if(t2) t2.textContent = fmtTime(APP.timer.elapsed);
+    }, 250);
+  }
+  function stopTimer(){
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer.handle = null;
+    APP.timer.running = false;
+  }
+  function fmtTime(s){
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return mm+':'+ss;
+  }
+
+  // ---------------------------
+  // Progress & scoring
+  // ---------------------------
+  function totalQuestionsAll(){ return APP.totals.a1 + APP.totals.a2 + APP.totals.a3 + APP.totals.a4; }
+  function answeredAllCount(){ return APP.answered.a1.size + APP.answered.a2.size + APP.answered.a3.size + APP.answered.a4.size; }
+  function correctAllCount(){ return APP.correct.a1 + APP.correct.a2 + APP.correct.a3 + APP.correct.a4; }
+  function percent(x, total){ return total<=0 ? 0 : Math.round((x/total)*100); }
+
+  function updateHeader(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    document.getElementById('progLabel').textContent = prog + '%';
+    document.getElementById('progBar').style.width = prog + '%';
+    document.getElementById('scoreLabel').textContent = sc + '%';
+
+    if(prog >= 100){
+      showOverlay();
+      stopTimer();
+    }
+  }
+
+  function updateFinalSummary(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const a = document.getElementById('answeredLabel');
+    const t = document.getElementById('totalLabel');
+    const c = document.getElementById('correctLabel');
+    if(a) a.textContent = ans;
+    if(t) t.textContent = total;
+    if(c) c.textContent = cor;
+  }
+
+  // ---------------------------
+  // Anti-trampa: hint / attempt
+  // ---------------------------
+  function hint(act){
+    APP.usedHint[act] = true;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = true;
+
+    let msg = '';
+    if(act === 'a1'){ msg = 'A1: Tabla completa (Elegir libro / Leer 20 min / Subrayar ideas / Hacer resumen / Exponer). Respuestas: 1) A 2) A.'; }
+    if(act === 'a2'){ msg = 'A2: Valores 6, 9, 5 (suma 20). Respuestas: 2) A 3) A.'; }
+    if(act === 'a3'){ msg = 'A3 Orden: Elegir tema → Buscar información → Organizar información → Ensayar exposición → Exponer al grupo. Reflexión: A.'; }
+    if(act === 'a4'){ msg = 'A4: 1) Tabla 2) Línea del tiempo 3) Gráfica. Escribe una frase clara en cada cuadro.'; }
+    flashNote(msg || 'Respuestas mostradas.');
+  }
+  function newAttempt(act){
+    APP.usedHint[act] = false;
+    const btn = document.getElementById('verify-'+act);
+    if(btn) btn.disabled = false;
+    flashNote('Listo: puedes volver a verificar.');
+  }
+  function flashNote(text){
+    const el = document.createElement('div');
+    el.style.position='fixed';
+    el.style.left='50%';
+    el.style.top='18px';
+    el.style.transform='translateX(-50%)';
+    el.style.background='rgba(255,255,255,.94)';
+    el.style.border='1px solid rgba(254,202,202,.95)';
+    el.style.boxShadow='0 18px 40px rgba(0,0,0,.28)';
+    el.style.padding='10px 12px';
+    el.style.borderRadius='14px';
+    el.style.maxWidth='900px';
+    el.style.width='calc(100% - 28px)';
+    el.style.zIndex='99999';
+    el.style.color='#1a0b0b';
+    el.style.fontWeight='900';
+    el.style.fontSize='13px';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s ease'; }, 2200);
+    setTimeout(()=>{ el.remove(); }, 2600);
+  }
+
+  // ---------------------------
+  // Verify (MCQ + production checks)
+  // ---------------------------
+  function verify(act){
+    if(APP.usedHint[act]){
+      flashNote('Primero presiona "Nuevos valores / Intentar" para habilitar la verificación.');
+      return;
+    }
+
+    // Production checks per activity (count as items)
+    if(act === 'a1'){ verifyA1Production(); }
+    if(act === 'a2'){ verifyA2Production(); }
+    if(act === 'a3'){ verifyA3Production(); }
+    if(act === 'a4'){ verifyA4Production(); }
+
+    // MCQ checks
+    const keys = KEYS[act];
+    if(keys){
+      for(const [qid, correctVal] of Object.entries(keys)){
+        const chosen = document.querySelector('input[name="'+qid+'"]:checked');
+        const fb = document.getElementById('fb-'+qid);
+        if(!fb) continue;
+
+        if(!chosen){
+          fb.className='feedback show';
+          fb.textContent='Elige una opción antes de verificar.';
+          continue;
+        }
+
+        const ok = chosen.value === correctVal;
+        fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+        fb.textContent = ok ? 'Correcto.' : ('Aún no. Respuesta correcta: ' + correctVal.toUpperCase() + '.');
+
+        if(!APP.answered[act].has(qid)){
+          APP.answered[act].add(qid);
+          if(ok) APP.correct[act] += 1;
+          APP.log.push({ act, qid, ok });
+        }
+      }
+    }
+
+    updateHeader();
+    updateFinalSummary();
+  }
+
+  // A1 production: table completion correctness (1 synthetic item)
+  function verifyA1Production(){
+    const fb = document.getElementById('fb-a1prod');
+    const fields = ['a1_mon','a1_tue','a1_wed','a1_thu','a1_fri'];
+    const values = {};
+    let allFilled = true;
+    fields.forEach(id=>{
+      const el = document.getElementById(id);
+      values[id] = (el && el.value) ? el.value.trim() : '';
+      if(!values[id]) allFilled = false;
+    });
+
+    if(!allFilled){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Falta completar la tabla (elige una opción en cada día).';
+      return;
+    }
+
+    // Check exact target (designed for a clear model)
+    let ok = true;
+    for(const [k,v] of Object.entries(A1_TARGET)){
+      if((values[k]||'') !== v) ok = false;
+    }
+
+    const qid = 'a1prod';
+    if(!APP.answered.a1.has(qid)){
+      APP.answered.a1.add(qid);
+      if(ok) APP.correct.a1 += 1;
+      APP.log.push({ act:'a1', qid, ok });
+    }
+
+    fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok
+      ? 'Producción correcta: tu tabla queda lista para exponer.'
+      : 'Tabla completa, pero revisa si el orden de actividades coincide con el modelo de la feria (puedes intentar de nuevo).';
+  }
+
+  // A2 production: sum and exact values (1 synthetic item)
+  function verifyA2Production(){
+    const fb = document.getElementById('fb-a2prod');
+    const v = getSurveyValues();
+    const sumOk = (v.sum === A2_TARGET.total);
+    const ok = sumOk && (v.cuentos===A2_TARGET.cuentos) && (v.leyendas===A2_TARGET.leyendas) && (v.poemas===A2_TARGET.poemas);
+
+    const qid = 'a2prod';
+    if(!APP.answered.a2.has(qid)){
+      APP.answered.a2.add(qid);
+      if(ok) APP.correct.a2 += 1;
+      APP.log.push({ act:'a2', qid, ok });
+    }
+
+    if(!sumOk){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Tu producción aún no está lista: la suma debe ser 20.';
+      return;
+    }
+
+    fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+    fb.textContent = ok
+      ? 'Producción correcta: tu gráfica representa la encuesta y está lista para exponer.'
+      : 'La suma es 20, pero revisa si los valores coinciden con el ejemplo (6, 9, 5).';
+  }
+
+  // A3 production: order checked + title not empty (2 synthetic items: order + title)
+  function verifyA3Production(){
+    const fb = document.getElementById('fb-a3prod');
+
+    // Order item
+    if(!APP.orderChecked){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Primero presiona "Revisar orden" para validar tu línea del tiempo.';
+      return;
+    }
+
+    // Title item
+    const title = (document.getElementById('a3_title').value || '').trim();
+    if(!title){
+      fb.className = 'feedback show bad';
+      fb.textContent = 'Escribe el título de tu línea del tiempo (ayuda a que otros entiendan).';
+      // still can count the order item (already counted in checkOrder)
+      markA3Title(false);
+      return;
+    }
+    markA3Title(true);
+
+    fb.className = 'feedback show ' + (APP.orderOk ? 'ok' : 'bad');
+    fb.textContent = APP.orderOk
+      ? 'Producción lista: orden correcto y título claro. Puedes exponerlo.'
+      : 'Tienes título, pero el orden aún no coincide. Ajusta y vuelve a revisar.';
+  }
+
+  function markA3Title(ok){
+    const qid = 'a3title';
+    if(!APP.answered.a3.has(qid)){
+      APP.answered.a3.add(qid);
+      if(ok) APP.correct.a3 += 1;
+      APP.log.push({ act:'a3', qid, ok });
+    }
+  }
+
+  // A4 production: three textareas not empty (3 synthetic items, one per phrase)
+  function verifyA4Production(){
+    const fb = document.getElementById('fb-a4prod');
+    const t1 = (document.getElementById('a4_t1').value || '').trim();
+    const t2 = (document.getElementById('a4_t2').value || '').trim();
+    const t3 = (document.getElementById('a4_t3').value || '').trim();
+
+    const items = [
+      { qid:'a4t1', ok: t1.length >= 10 },
+      { qid:'a4t2', ok: t2.length >= 10 },
+      { qid:'a4t3', ok: t3.length >= 10 }
+    ];
+
+    items.forEach(it=>{
+      if(!APP.answered.a4.has(it.qid)){
+        APP.answered.a4.add(it.qid);
+        if(it.ok) APP.correct.a4 += 1;
+        APP.log.push({ act:'a4', qid:it.qid, ok:it.ok });
+      }
+    });
+
+    const allOk = items.every(x=>x.ok);
+    fb.className = 'feedback show ' + (allOk ? 'ok' : 'bad');
+    fb.textContent = allOk
+      ? 'Producción lista: tus frases son claras para exponer.'
+      : 'Escribe una frase en cada cuadro (mínimo 10 caracteres) para preparar tu exposición.';
+  }
+
+  // ---------------------------
+  // Activity 2 survey rendering
+  // ---------------------------
+  function getSurveyValues(){
+    const cuentos = Number(document.getElementById('s_cuentos').value || 0);
+    const leyendas = Number(document.getElementById('s_leyendas').value || 0);
+    const poemas = Number(document.getElementById('s_poemas').value || 0);
+    const sum = cuentos + leyendas + poemas;
+    return { cuentos, leyendas, poemas, sum };
+  }
+
+  function updateSurvey(){
+    const v = getSurveyValues();
+
+    document.getElementById('v_cuentos').textContent = v.cuentos;
+    document.getElementById('v_leyendas').textContent = v.leyendas;
+    document.getElementById('v_poemas').textContent = v.poemas;
+
+    const note = document.getElementById('sumNote');
+    note.textContent = 'Suma: ' + v.sum + ' (debe ser 20)';
+    note.style.borderColor = (v.sum === 20) ? 'rgba(21,128,61,.25)' : 'rgba(239,68,68,.25)';
+    note.style.background = (v.sum === 20) ? 'rgba(21,128,61,.10)' : 'rgba(239,68,68,.10)';
+    note.style.color = (v.sum === 20) ? '#166534' : '#7a0f0f';
+
+    const items = [
+      { label:'Cuentos', value:v.cuentos },
+      { label:'Leyendas', value:v.leyendas },
+      { label:'Poemas', value:v.poemas },
+    ];
+    drawBars('a2Bars', items);
+  }
+
+  function drawBars(containerId, items){
+    const max = Math.max.apply(null, items.map(x=>x.value).concat([1]));
+    const wrap = document.getElementById(containerId);
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    items.forEach(it=>{
+      const row = document.createElement('div');
+      row.className='barRow';
+      const pct = Math.round((it.value/max)*100);
+      row.innerHTML =
+        '<div><b>'+it.label+'</b></div>'+
+        '<div class="barTrack"><div class="barFill" style="width:'+pct+'%"></div></div>'+
+        '<div class="mono" style="text-align:right"><b>'+it.value+'</b></div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------------------------
+  // Activity 3 ordering
+  // ---------------------------
+  function renderA3(){
+    if(orderItems.length === 0){
+      orderItems = [...ORDER_CORRECT];
+      shuffleOrder();
+    } else {
+      drawOrder();
+    }
+  }
+  function shuffleOrder(){
+    orderItems = [...ORDER_CORRECT].sort(()=>Math.random()-0.5);
+    drawOrder();
+    APP.orderOk = false;
+    APP.orderChecked = false;
+    const fb = document.getElementById('fb-a3order');
+    if(fb){ fb.className='feedback'; fb.textContent=''; }
+  }
+  function drawOrder(){
+    const wrap = document.getElementById('a3Order');
+    if(!wrap) return;
+    wrap.innerHTML = '';
+    orderItems.forEach((txt, idx)=>{
+      const row = document.createElement('div');
+      row.className='orderItem';
+      row.innerHTML =
+        '<div class="left">'+
+          '<div class="num">'+(idx+1)+'</div>'+
+          '<div><b>'+txt+'</b></div>'+
+        '</div>'+
+        '<div class="btnrow" style="gap:8px;">'+
+          '<button class="miniBtn ghost" onclick="moveUp('+idx+')">▲</button>'+
+          '<button class="miniBtn ghost" onclick="moveDown('+idx+')">▼</button>'+
+        '</div>';
+      wrap.appendChild(row);
+    });
+  }
+  function moveUp(i){
+    if(i<=0) return;
+    const tmp = orderItems[i-1];
+    orderItems[i-1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+  function moveDown(i){
+    if(i>=orderItems.length-1) return;
+    const tmp = orderItems[i+1];
+    orderItems[i+1] = orderItems[i];
+    orderItems[i] = tmp;
+    drawOrder();
+  }
+
+  function checkOrder(){
+    const ok = orderItems.join('|') === ORDER_CORRECT.join('|');
+    APP.orderOk = ok;
+    APP.orderChecked = true;
+
+    const fb = document.getElementById('fb-a3order');
+    if(fb){
+      fb.className = 'feedback show ' + (ok ? 'ok' : 'bad');
+      fb.textContent = ok
+        ? '¡Correcto! Tu línea del tiempo está en orden.'
+        : 'Aún no. Revisa qué paso ocurre primero y cuál va al final.';
+    }
+
+    // Mark order as a scored production item
+    const qid = 'a3order';
+    if(!APP.answered.a3.has(qid)){
+      APP.answered.a3.add(qid);
+      if(ok) APP.correct.a3 += 1;
+      APP.log.push({ act:'a3', qid, ok });
+    }
+
+    updateHeader();
+    updateFinalSummary();
+  }
+
+  // ---------------------------
+  // Completion overlay
+  // ---------------------------
+  function showOverlay(){
+    const el = document.getElementById('overlay');
+    el.classList.add('show');
+    setTimeout(()=>{ if(el.classList.contains('show')) el.classList.remove('show'); }, 5000);
+  }
+  function hideOverlay(){
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ---------------------------
+  // Print results
+  // ---------------------------
+  function printResults(){
+    const total = totalQuestionsAll();
+    const ans = answeredAllCount();
+    const cor = correctAllCount();
+    const prog = percent(ans, total);
+    const sc = percent(cor, total);
+
+    const now = new Date();
+    const fecha = now.toLocaleString('es-MX');
+
+    const report = (
+      '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+      '<title>Resultados ODA</title>'+
+      '<style>body{font-family:Arial,sans-serif;margin:24px;color:#111827}h1{margin:0 0 6px}.muted{color:#6b7280}.box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:12px 0}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#f8fafc}.k{font-weight:700}</style>'+
+      '</head><body>'+
+      '<h1>Resultados de la ODA: Textos discontinuos (Producción)</h1>'+
+      '<div class="muted">Fecha y hora: '+fecha+'</div>'+
+      '<div class="box">'+
+        '<div><span class="k">Tiempo:</span> '+fmtTime(APP.timer.elapsed)+'</div>'+
+        '<div><span class="k">Progreso:</span> '+prog+'%</div>'+
+        '<div><span class="k">Aciertos:</span> '+sc+'% ('+cor+'/'+total+')</div>'+
+      '</div>'+
+      '<div class="box"><div class="k">Nombre del alumno:</div><div style="height:28px;border-bottom:1px solid #e5e7eb;margin-top:8px"></div></div>'+
+      '<div class="box"><div class="k">Detalle (primer intento):</div>'+
+        '<table><thead><tr><th>Actividad</th><th>Reactivo</th><th>Resultado</th></tr></thead><tbody>'+
+          APP.log.slice(0,400).map(x =>
+            '<tr><td>'+String(x.act).toUpperCase()+'</td><td>'+x.qid+'</td><td>'+(x.ok?'Correcto':'Incorrecto')+'</td></tr>'
+          ).join('')+
+        '</tbody></table>'+
+        '<div class="muted" style="margin-top:8px;">Autor: El Ruso</div>'+
+      '</div>'+
+      '</body></html>'
+    );
+
+    const w = window.open('', '_blank');
+    if(!w){ alert('El navegador bloqueó la ventana emergente. Permite pop-ups para imprimir.'); return; }
+    w.document.open();
+    w.document.write(report);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  // ---------------------------
+  // Reset all
+  // ---------------------------
+  function resetAll(){
+    hideOverlay();
+
+    // clear radios
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked = false);
+
+    // clear feedback
+    document.querySelectorAll('.feedback').forEach(f=> { f.className='feedback'; f.textContent=''; });
+
+    // reset selects / textareas
+    ['a1_mon','a1_tue','a1_wed','a1_thu','a1_fri'].forEach(id=> { const el=document.getElementById(id); if(el) el.value=''; });
+    ['a4_t1','a4_t2','a4_t3','a3_title'].forEach(id=> { const el=document.getElementById(id); if(el) el.value=''; });
+
+    // reset sliders to targets
+    document.getElementById('s_cuentos').value = 6;
+    document.getElementById('s_leyendas').value = 9;
+    document.getElementById('s_poemas').value = 5;
+    updateSurvey();
+
+    // reset state
+    for(const k of ['a1','a2','a3','a4']){
+      APP.answered[k].clear();
+      APP.correct[k]=0;
+      APP.usedHint[k]=false;
+      const vb = document.getElementById('verify-'+k);
+      if(vb) vb.disabled = false;
+    }
+    APP.log = [];
+    APP.orderOk = false;
+    APP.orderChecked = false;
+    orderItems = [];
+
+    // restart timer
+    if(APP.timer.handle) clearInterval(APP.timer.handle);
+    APP.timer = { start: Date.now(), elapsed: 0, handle: null, running: false };
+    startTimer();
+
+    updateHeader();
+    updateFinalSummary();
+    flashNote('ODA reiniciada.');
+    go('a1');
+  }
+
+  // Init
+  updateSurvey();
+  updateHeader();
+  updateFinalSummary();
+  startTimer();
+</script>
+
+</body>
+</html>

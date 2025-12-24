@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Textos discontinuos | ODA</title>
+<style>
+  :root{
+    --bgA:#b43a3a;
+    --bgB:#d56a3a;
+    --bgC:#e2a24a;
+    --panel:#4a2521;
+    --panel2:#3e1f1c;
+    --ink:#ffffff;
+    --muted:rgba(255,255,255,.86);
+    --soft:rgba(255,255,255,.14);
+    --btn:#f2cf63;
+    --btnInk:#2b1b12;
+    --shadow: 0 18px 40px rgba(0,0,0,.45);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 520px at 35% 45%, rgba(0,0,0,.18), transparent 60%),
+      linear-gradient(120deg, var(--bgA) 0%, var(--bgB) 55%, var(--bgC) 100%);
+    overflow-x:hidden;
+  }
+
+  /* Barra superior */
+  .topbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    background: rgba(0,0,0,.18);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    z-index: 50;
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  .topbar .left{font-size:14px}
+  .topbar .right{
+    font-size:13px;
+    display:flex;
+    gap:18px;
+    align-items:center;
+  }
+  .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+
+  /* Contenedor central */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:90px 18px 80px; /* deja espacio a barra */
+  }
+
+  .panel{
+    width:min(980px, 100%);
+    background: linear-gradient(180deg, rgba(74,37,33,.96), rgba(62,31,28,.96));
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px 22px 18px;
+  }
+
+  .panel h1{
+    margin:0 0 6px;
+    font-size: 26px;
+    letter-spacing:.2px;
+  }
+  .panel .contentLine{
+    margin:0 0 14px;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height:1.35;
+  }
+
+  .cols{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    margin-top: 8px;
+  }
+  @media (max-width: 860px){
+    .cols{grid-template-columns:1fr; gap:16px;}
+    .btnRow{justify-content:center}
+  }
+
+  .grade h2{
+    margin:0 0 8px;
+    font-size: 16px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  ul{
+    margin:0;
+    padding-left: 18px;
+    color: var(--muted);
+    line-height: 1.4;
+    font-size: 13.5px;
+  }
+  li{ margin: 6px 0; }
+
+  .btnRow{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    margin-top: 16px;
+    flex-wrap:wrap;
+  }
+  a.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--btn);
+    color: var(--btnInk);
+    text-decoration:none;
+    font-weight: 900;
+    border: 1px solid rgba(0,0,0,.12);
+    box-shadow: 0 10px 18px rgba(0,0,0,.22);
+    transition: transform .08s ease, filter .15s ease;
+    min-width: 190px;
+  }
+  a.btn:hover{ filter: brightness(1.02); }
+  a.btn:active{ transform: translateY(1px); }
+
+  /* Marcas institucionales (oficial) */
+  .brand-left, .brand-right{
+    position:fixed;
+    bottom:14px;
+    z-index: 60;
+    pointer-events:none;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+  }
+  .brand-left{left:14px}
+  .brand-left img{width:95px; height:auto; opacity:.35;}
+  .brand-right{right:14px; text-align:right}
+  .brand-right img{width:100px; height:auto; opacity:1;}
+  .brand-right .credit{
+    margin-top:2px;
+    font-size:12px;
+    color:rgba(255,255,255,.90);
+    font-weight:900;
+    text-shadow: 0 6px 10px rgba(0,0,0,.5);
+  }
+</style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="left">Fase 4 · Comprensión y producción de textos discontinuos</div>
+    <div class="right">
+      <div>Tiempo: <span class="mono">00:00</span></div>
+      <div>Aciertos: <span class="mono">--%</span></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="panel" aria-label="Portada de ODA">
+      <h1>Textos discontinuos · Fase 4</h1>
+      <p class="contentLine">
+        <b>Contenido:</b> Comprensión y producción de textos discontinuos para organizar actividades y ordenar información.
+      </p>
+
+      <div class="cols">
+        <div class="grade">
+          <h2>3.º año</h2>
+          <ul>
+            <li><b>PDA 1:</b> Identifica características y funciones de los textos discontinuos para programar y calendarizar actividades.</li>
+            <li><b>PDA 2:</b> Reflexiona sobre la utilidad de los formatos para organizar actividades e información.</li>
+            <li><b>PDA 3:</b> Usa mayúsculas al comienzo de nombres propios y oraciones.</li>
+          </ul>
+        </div>
+
+        <div class="grade">
+          <h2>4.º año</h2>
+          <ul>
+            <li><b>PDA 1:</b> Identifica características y funciones de los textos discontinuos para programar y calendarizar actividades.</li>
+            <li><b>PDA 2:</b> Reflexiona sobre la utilidad de los formatos para organizar actividades e información.</li>
+            <li><b>PDA 3:</b> Usa mayúsculas al comienzo de nombres propios y oraciones.</li>
+            <li><b>PDA 4:</b> Emplea signos de puntuación como el punto y la coma.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="btnRow" role="navigation" aria-label="Accesos por grado">
+        <a class="btn" href="menu_3ro.html">Actividades de 3.º año</a>
+        <a class="btn" href="menu_4to.html">Actividades de 4.º año</a>
+      </div>
+    </section>
+  </div>
+
+  <div class="brand-left"><img src="imagenes/escudo.png" alt="Escudo"></div>
+  <div class="brand-right">
+    <img src="imagenes/firma.png" alt="Firma">
+    <div class="credit">Autor: El Ruso</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Actividades de 4.º año | ODA</title>
+<style>
+  :root{
+    --bgA:#b43a3a; --bgB:#d56a3a; --bgC:#e2a24a;
+    --panel:#4a2521; --panel2:#3e1f1c;
+    --muted:rgba(255,255,255,.86);
+    --btn:#f2cf63; --btnInk:#2b1b12;
+    --shadow: 0 18px 40px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(900px 520px at 35% 45%, rgba(0,0,0,.18), transparent 60%),
+      linear-gradient(120deg, var(--bgA) 0%, var(--bgB) 55%, var(--bgC) 100%);
+    overflow-x:hidden;
+  }
+  .topbar{
+    position:fixed; top:0; left:0; right:0;
+    height:44px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 14px;
+    background: rgba(0,0,0,.18);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    z-index: 50;
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  .topbar .left{font-size:14px}
+  .topbar .right{
+    font-size:13px;
+    display:flex; gap:18px; align-items:center;
+  }
+  .mono{
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:90px 18px 80px;
+  }
+  .panel{
+    width:min(980px, 100%);
+    background: linear-gradient(180deg, rgba(74,37,33,.96), rgba(62,31,28,.96));
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px 22px 18px;
+  }
+  h1{margin:0 0 6px; font-size: 26px; letter-spacing:.2px;}
+  .sub{margin:0 0 14px; color: var(--muted); font-size: 13.5px;}
+  .btnRow{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top: 6px;
+  }
+  a.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--btn);
+    color: var(--btnInk);
+    text-decoration:none;
+    font-weight: 900;
+    border: 1px solid rgba(0,0,0,.12);
+    box-shadow: 0 10px 18px rgba(0,0,0,.22);
+    transition: transform .08s ease, filter .15s ease;
+    min-width: 230px;
+    text-align:center;
+  }
+  a.btn:hover{ filter: brightness(1.02); }
+  a.btn:active{ transform: translateY(1px); }
+
+  .backRow{display:flex; justify-content:center; margin-top: 14px;}
+  a.back{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.92);
+    color: #2b1b12;
+    text-decoration:none;
+    font-weight: 900;
+    border: 1px solid rgba(0,0,0,.10);
+    box-shadow: 0 10px 18px rgba(0,0,0,.18);
+  }
+
+  .brand-left, .brand-right{
+    position:fixed;
+    bottom:14px;
+    z-index: 60;
+    pointer-events:none;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+  }
+  .brand-left{left:14px}
+  .brand-left img{width:95px; height:auto; opacity:.35;}
+  .brand-right{right:14px; text-align:right}
+  .brand-right img{width:100px; height:auto; opacity:1;}
+  .brand-right .credit{
+    margin-top:2px;
+    font-size:12px;
+    color:rgba(255,255,255,.90);
+    font-weight:900;
+    text-shadow: 0 6px 10px rgba(0,0,0,.5);
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="left">Fase 4 · Comprensión y producción de textos discontinuos</div>
+    <div class="right">
+      <div>Tiempo: <span class="mono">00:00</span></div>
+      <div>Aciertos: <span class="mono">--%</span></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="panel" aria-label="Menú de actividades">
+      <h1>Actividades de 4.º año</h1>
+      <p class="sub">Da clic en la actividad que quieras trabajar.</p>
+
+      <div class="btnRow" role="navigation" aria-label="Actividades">
+        <a class="btn" href="PDA 1 4to.html">1. PDA 1</a>
+<a class="btn" href="PDA 2 4to.html">2. PDA 2</a>
+<a class="btn" href="PDA 3 4to.html">3. PDA 3</a>
+<a class="btn" href="PDA 4 4to.html">4. PDA 4</a>
+      </div>
+
+      <div class="backRow">
+        <a class="back" href="Index.html">Volver a la portada</a>
+      </div>
+    </section>
+  </div>
+
+  <div class="brand-left"><img src="imagenes/escudo.png" alt="Escudo"></div>
+  <div class="brand-right">
+    <img src="imagenes/firma.png" alt="Firma">
+    <div class="credit">Autor: El Ruso</div>
+  </div>
+</body>
+</html>
